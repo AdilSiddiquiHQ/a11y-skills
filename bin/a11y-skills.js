@@ -562,9 +562,22 @@ function cmdAudit(argv) {
 
   const isUrl = /^https?:\/\//i.test(opts.target);
   const targetPath = isUrl ? opts.target : resolve(opts.target);
-  if (!isUrl && !existsSync(targetPath)) {
-    console.error(`no such file: ${opts.target}`);
-    process.exit(3);
+  if (!isUrl) {
+    if (!existsSync(targetPath)) {
+      console.error(`no such file: ${opts.target}`);
+      process.exit(2);
+    }
+    // A directory is not a page. Without this check the path is handed to the
+    // browser as a file:// URL, and Chromium renders its own directory listing —
+    // which audits cleanly and reports landmark problems that belong to that
+    // listing, not to your site. A wrong answer is worse than a refusal.
+    if (statSync(targetPath).isDirectory()) {
+      console.error(`audit takes an HTML file or an http(s) URL, not a directory: ${opts.target}`);
+      console.error(`  to audit every page in it:`);
+      console.error(`    find ${opts.target} -name '*.html' -exec a11y-skills audit {} \\;`);
+      console.error(`  the GitHub Action walks a directory for you: docs/ACTION.md`);
+      process.exit(2);
+    }
   }
 
   const { axe, map } = ruleData();

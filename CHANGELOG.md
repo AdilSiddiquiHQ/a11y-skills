@@ -4,6 +4,40 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.1] — 2026-10-19
+
+A patch release with one behaviour fix that matters and one thing that was simply
+missing.
+
+### Fixed
+
+- **`audit <directory>` no longer silently audits the wrong thing.** Handed a
+  directory, it was passed to the browser as a `file://` URL, so Chromium rendered
+  its own directory listing and the report described *that* — `landmark-one-main`,
+  `region` — with no sign anything was wrong. It now exits 2 and prints how to
+  audit every page. This mattered most via the GitHub Action, which documents
+  directories as supported.
+- **A nonexistent file exits 2, not 3.** Exit 3 means "a dependency is missing" and
+  had been doing double duty.
+- **The Action's shell no longer trips `set -u` on an empty array.** `"${extra[@]}"`
+  is an unbound variable in bash 3.2 — the bash macOS ships — so anyone running
+  the step's logic by hand on a Mac got an error instead of an audit.
+
+### Changed
+
+- **The Action's step body is `scripts/ci-audit.sh`**, not an inline `run:` block.
+  Shell that only ever executes through `uses:` is untested shell; as a script it
+  runs in the fixtures CI job, with assertions on the exit code, the
+  `GITHUB_OUTPUT` values and the job summary.
+- **Two `axe` runs per page instead of three.** A build output directory holds
+  hundreds of files and each run launches a browser.
+- `docs/ACTION.md` now documents the `wcag-only` and `summary` inputs and the
+  `findings` and `without-skill` outputs, which were in `action.yml` and in no
+  document.
+- The fixtures CI job asserts that `audit` refuses a directory, and that
+  `scripts/ci-audit.sh` exits 1 on a failing directory and 0 on a clean page while
+  naming the skill that fixes the finding.
+
 ## [0.3.0] — 2026-10-19
 
 The release that closes the loop. `0.2.0` was a library of procedures you had to

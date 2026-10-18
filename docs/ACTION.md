@@ -1,7 +1,7 @@
 # The GitHub Action
 
 ```yaml
-- uses: AdilSiddiquiHQ/a11y-skills@v0.3.0
+- uses: AdilSiddiquiHQ/a11y-skills@v0.3.1
   with:
     target: ./dist          # a file, a directory of HTML, or an https:// URL
     fail-on: serious        # critical | serious | moderate | minor | none
@@ -11,17 +11,60 @@ It runs axe-core over your pages and writes the findings to the job summary, wit
 the skill that fixes each one. Pin the version, as above — `@main` is fine for a
 personal project and a bad idea for anything else.
 
+## Inputs
+
+| Input | Default | What it does |
+|---|---|---|
+| `target` | *required* | An HTML file, a directory (searched recursively for `*.html`), or an `http(s)` URL. |
+| `fail-on` | `serious` | Lowest impact that fails the step: `critical`, `serious`, `moderate`, `minor`, `none`. |
+| `wcag-only` | `false` | Ignore best-practice rules and report WCAG failures only. |
+| `summary` | `true` | Write the Markdown report to the job summary. |
+
+## Outputs
+
+| Output | What it is |
+|---|---|
+| `findings` | Total findings across everything audited. |
+| `without-skill` | Findings whose axe rule has no skill behind it yet. |
+
+`without-skill` is the honest measure of what this library does not cover, and it
+is worth surfacing rather than hiding:
+
+```yaml
+      - uses: AdilSiddiquiHQ/a11y-skills@v0.3.1
+        id: a11y
+        with: { target: ./dist }
+
+      - if: steps.a11y.outputs.without-skill != '0'
+        run: echo "::notice::${{ steps.a11y.outputs.without-skill }} findings have no skill in this library yet"
+```
+
 ## What it does, exactly
 
 1. Installs `axe-core` and `playwright` with `--no-save`, so nothing is added to
    your project's dependency tree or lockfile.
 2. Installs Chromium for Playwright.
-3. Audits the target. A directory is searched recursively for `*.html`.
+3. Walks the target, auditing each page. Two `axe` runs per page: one for the
+   machine-readable counts, one for the report.
 4. Writes a Markdown report to `$GITHUB_STEP_SUMMARY` and exits non-zero if any
    finding is at or above `fail-on`.
 
 Nothing is uploaded anywhere. There are no secrets to configure and no token to
 create — the action reads your HTML and renders a report in your own runner.
+
+The whole step is `scripts/ci-audit.sh`, which is a script rather than an inline
+`run:` block for a reason: shell that only executes through `uses:` is untested
+shell, and it can be run and asserted on directly (the fixtures CI job does, and
+so can you):
+
+```bash
+TARGET=./dist FAIL_ON=serious SUMMARY=true \
+GITHUB_OUTPUT=/tmp/out GITHUB_STEP_SUMMARY=/tmp/summary \
+  bash scripts/ci-audit.sh
+```
+
+Exit codes: **0** clean, **1** findings at or above `fail-on`, **3** nothing could
+be audited (no HTML under the target).
 
 ## Verifying a built site
 
@@ -41,7 +84,7 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: '20' }
       - run: npm ci && npm run build
-      - uses: AdilSiddiquiHQ/a11y-skills@v0.3.0
+      - uses: AdilSiddiquiHQ/a11y-skills@v0.3.1
         with:
           target: ./dist
           fail-on: serious
@@ -50,7 +93,7 @@ jobs:
 A static page pair, or a live deployment:
 
 ```yaml
-      - uses: AdilSiddiquiHQ/a11y-skills@v0.3.0
+      - uses: AdilSiddiquiHQ/a11y-skills@v0.3.1
         with:
           target: https://staging.example.com
 ```

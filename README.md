@@ -131,7 +131,7 @@ fail a pull request on real findings and get the fixing skills in the job summar
 ```yaml
 - uses: actions/checkout@v4
 - run: npm ci && npm run build
-- uses: AdilSiddiquiHQ/a11y-skills@v0.3.0
+- uses: AdilSiddiquiHQ/a11y-skills@v0.3.1
   with:
     target: ./dist        # a file, a directory of HTML, or an https:// URL
     fail-on: serious      # critical | serious | moderate | minor | none
