@@ -26,10 +26,15 @@ to 30, and — more importantly — the fixtures that prove the advice works.
   with the criteria that are deliberately absent and why.
 - **Generated `skills/README.md`** with a derived criterion-to-skill map, so the
   index cannot disagree with the skills.
-- **CLI**: `search`, `info`, `criteria`, and `--json` on all of them.
+- **CLI**: `search`, `info`, `criteria`, and `--json` on all of them, plus
+  `--no-color` (and the `NO_COLOR` / `FORCE_COLOR` environment variables).
 - **`docs/demo.gif`** and `scripts/make-demo.mjs` — the demo is built from a real
   fixture by running axe-core and outlining what it found; the script refuses to
   build if the "after" fixture has violations.
+- **`docs/cli.gif`** and `scripts/make-cli-demo.mjs` — the terminal demo runs the
+  real CLI, captures its real stdout, and renders it, sized to the output so that
+  nothing is clipped to make the demo look tidier. No pty, no Python, no
+  committed mystery binary.
 - Project hygiene: `docs/AUTHORING.md`, `docs/ARCHITECTURE.md`, `AGENTS.md`,
   `SECURITY.md`, `CODE_OF_CONDUCT.md`, `CITATION.cff`, issue and pull request
   templates.

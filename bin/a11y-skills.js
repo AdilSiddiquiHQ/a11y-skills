@@ -37,7 +37,21 @@ const DEFAULT_DESTS = {
   opencode: join(homedir(), '.config', 'opencode', 'skills'),
 };
 
-const C = process.stdout.isTTY
+/**
+ * Colour, following the conventions everyone already expects: `--no-color`,
+ * then `NO_COLOR`, then `FORCE_COLOR`, then a TTY check. Respecting NO_COLOR
+ * matters because most of this CLI's output gets piped into a file or another
+ * tool, and escape sequences in a log are noise.
+ */
+function colourEnabled() {
+  if (process.argv.includes('--no-color')) return false;
+  if (process.env.NO_COLOR) return false;
+  if (process.env.FORCE_COLOR && process.env.FORCE_COLOR !== '0') return true;
+  return Boolean(process.stdout.isTTY);
+}
+
+const GREEN = colourEnabled();
+const C = GREEN
   ? { bold: '\x1b[1m', dim: '\x1b[2m', green: '\x1b[32m', reset: '\x1b[0m' }
   : { bold: '', dim: '', green: '', reset: '' };
 
@@ -62,6 +76,8 @@ ${C.bold}INSTALL OPTIONS${C.reset}
 
 ${C.bold}OUTPUT${C.reset}
   --json           machine-readable output (list, search, info, criteria)
+  --no-color       never emit colour; also honours the NO_COLOR and FORCE_COLOR
+                   environment variables
 
 ${C.bold}EXAMPLES${C.reset}
   npx github:AdilSiddiquiHQ/a11y-skills search "dialog focus"
@@ -320,7 +336,7 @@ function parseArgs(argv) {
     else if (a === '--force') opts.force = true;
     else if (a === '--dry-run') opts.dryRun = true;
     else if (a === '--help' || a === '-h') opts.help = true;
-    else if (a === '--json') continue;
+    else if (a === '--json' || a === '--no-color' || a === '--color') continue;
     else {
       console.error(`unknown option: ${a}`);
       process.exit(2);

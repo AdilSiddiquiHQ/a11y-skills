@@ -18,6 +18,7 @@ npm test          # content gate + README/claims pinning. No browser, fast.
 npm run fixtures  # axe-core in Chromium over every before/after pair
 npm run build-docs # regenerate skills/README.md, docs/COVERAGE.md, the badge
 npm run demo      # regenerate docs/demo.gif (needs ffmpeg)
+npm run demo:cli  # regenerate docs/cli.gif (needs ffmpeg)
 npm run check     # build-docs + test + fixtures
 ```
 

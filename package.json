@@ -30,7 +30,8 @@
     "security": "npx --yes github:AdilSiddiquiHQ/skillsleuth#v0.4.0 . --fail-on none",
     "test": "node verify/verify-skills.js && node verify/verify-readme.js",
     "test:all": "npm test && npm run fixtures",
-    "check": "npm run build-docs && npm test && npm run fixtures"
+    "check": "npm run build-docs && npm test && npm run fixtures",
+    "demo:cli": "node scripts/make-cli-demo.mjs"
   },
   "keywords": [
     "accessibility",

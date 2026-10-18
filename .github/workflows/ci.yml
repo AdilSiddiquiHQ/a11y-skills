@@ -65,6 +65,23 @@ jobs:
           node bin/a11y-skills.js criteria 1.4.3 --json > /tmp/criteria.json
           node -e "const r=require('/tmp/criteria.json'); if(!r.skills.length) process.exit(1); console.log('SC 1.4.3 covered by', r.skills.join(', '))"
 
+      # Colour control is a contract, not decoration: escape sequences in a log
+      # file are noise, and the CLI demo is built by forcing colour on.
+      - name: Colour is opt-out and opt-in
+        run: |
+          set -euo pipefail
+          NO_COLOR=1 node bin/a11y-skills.js criteria 1.4.3 > /tmp/nocolor.txt
+          if grep -q "$(printf '\033')" /tmp/nocolor.txt; then
+            echo "::error::NO_COLOR still emitted escape sequences"
+            exit 1
+          fi
+          FORCE_COLOR=1 node bin/a11y-skills.js criteria 1.4.3 > /tmp/force.txt
+          if ! grep -q "$(printf '\033')" /tmp/force.txt; then
+            echo "::error::FORCE_COLOR did not force colour"
+            exit 1
+          fi
+          echo "colour: NO_COLOR suppresses, FORCE_COLOR forces"
+
   fixtures:
     name: Run executable fixtures
     runs-on: ubuntu-latest

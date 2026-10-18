@@ -229,6 +229,12 @@ agent can drive this without screen-scraping the human output:
 npx github:AdilSiddiquiHQ/a11y-skills search "forgot password" --json
 ```
 
+![The a11y-skills CLI: searching for a problem in plain words, then inspecting the skill it found](docs/cli.gif)
+
+<sub>`npm run demo:cli` runs the real CLI and renders its real stdout, so the
+terminal above cannot disagree with the tool. `--no-color` and the `NO_COLOR`
+environment variable are honoured for anything that pipes this into a file.</sub>
+
 ## Why not just ask the model
 
 Fair question, and mostly the answer is "you should". A model with a good sense
@@ -319,6 +325,8 @@ scripts/generate-index.js        → skills/README.md
 scripts/generate-coverage.js     → docs/COVERAGE.md and the coverage badge
 scripts/make-demo.mjs            → docs/demo.gif, built from a real fixture
 bin/a11y-skills.js               the zero-dependency CLI
+docs/demo.gif                    generated: axe-core's findings, then the fix
+docs/cli.gif                     generated: the real CLI output
 docs/AUTHORING.md                the spec a skill must satisfy
 docs/ARCHITECTURE.md             how the layers fit, and why
 docs/COVERAGE.md                 generated criterion-by-criterion coverage
