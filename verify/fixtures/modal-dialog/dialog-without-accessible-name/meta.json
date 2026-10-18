@@ -1,0 +1,7 @@
+{
+  "skill": "modal-dialog",
+  "case": "dialog-without-accessible-name",
+  "criterion": "SC 4.1.2 Name, Role, Value",
+  "why": "A role=\"dialog\" with no name is announced as an unnamed dialog, so the user is moved into a container they cannot identify. aria-labelledby pointing at the visible heading is the fix.",
+  "expectRules": ["aria-dialog-name"]
+}

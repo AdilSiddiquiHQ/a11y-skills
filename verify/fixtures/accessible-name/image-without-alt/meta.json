@@ -1,0 +1,7 @@
+{
+  "skill": "accessible-name",
+  "case": "image-without-alt",
+  "criterion": "SC 1.1.1 Non-text Content",
+  "why": "An img with no alt attribute makes a screen reader read the file path. The fix is real alt text for an informative image — not an empty alt, which would hide it.",
+  "expectRules": ["image-alt"]
+}

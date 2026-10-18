@@ -12,11 +12,14 @@
  *   2. every WCAG success criterion a skill declares or mentions exists in
  *      WCAG 2.2, is named as the spec names it, and is not one of the obsolete
  *      ones
- *   3. the index in skills/README.md lists exactly the skills that exist
+ *   3. the generated files (the skills index and the coverage report) are
+ *      byte-identical to what the generators produce now, so the documents
+ *      cannot drift from the skills they describe
  *
  * What this does NOT do is check that a skill's advice is correct. That is what
- * verify/fixtures/ is for. This file catches the class of error that is
- * mechanical and embarrassing; it is the floor, not the ceiling.
+ * verify/fixtures/ is for — a real browser running axe-core over a failing and a
+ * fixed document. This file catches the class of error that is mechanical and
+ * embarrassing; it is the floor, not the ceiling.
  *
  *   node verify/verify-skills.js [--json]
  */
@@ -24,6 +27,8 @@
 import { readFileSync, readdirSync, existsSync, statSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { renderIndex } from '../scripts/generate-index.js';
+import { renderCoverage, renderBadge } from '../scripts/generate-coverage.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, '..');
@@ -66,6 +71,27 @@ function parseFrontmatter(text) {
 
 function sectionsOf(body) {
   return [...body.matchAll(/^##\s+(.+?)\s*$/gm)].map((m) => m[1].trim());
+}
+
+/**
+ * Fail if a generated file on disk is not byte-identical to what the generator
+ * produces now. Reports the first differing line rather than dumping both files,
+ * because the useful information is "which part changed".
+ */
+function checkGenerated(label, path, render, command, problems) {
+  if (!existsSync(path)) {
+    problems.push(`${label}: missing — run \`${command}\``);
+    return;
+  }
+  const actual = readFileSync(path, 'utf8');
+  const expected = render();
+  if (actual === expected) return;
+  const a = actual.split('\n');
+  const b = expected.split('\n');
+  const i = a.findIndex((line, n) => line !== b[n]);
+  problems.push(
+    `${label}: is out of date (first difference at line ${i + 1}) — run \`${command}\``
+  );
 }
 
 /** Every `SC 1.4.3` / `success criterion 1.4.3` style reference in prose. */
@@ -196,23 +222,32 @@ function main() {
     notes.push(`ok  ${dir.padEnd(28)} ${String(declaredCount).padStart(2)} criteria, ${sections.length} sections`);
   }
 
-  // 7. the index must match reality, exactly — a stale index is the most
-  //    common rot in a curated list and the hardest to notice.
-  if (!existsSync(INDEX)) {
-    problems.push('skills/README.md: missing — the index is how anyone finds a skill');
-  } else {
-    const index = readFileSync(INDEX, 'utf8');
-    for (const dir of dirs) {
-      if (!index.includes(`skills/${dir}/`) && !index.includes(`(${dir}/)`) && !index.includes(`./${dir}/`)) {
-        problems.push(`skills/README.md: does not list the existing skill '${dir}'`);
-      }
-    }
-    const linked = [...index.matchAll(/\(\.?\/([a-z0-9-]+)\/\)/g)].map((m) => m[1]);
-    for (const name of new Set(linked)) {
-      if (!dirs.includes(name)) {
-        problems.push(`skills/README.md: links to '${name}/', which does not exist`);
-      }
-    }
+  // 7. generated files must be exactly current.
+  //
+  //    Comparing whole files rather than checking "does the index mention each
+  //    skill" is deliberate: the weaker check passes when a skill is renamed in
+  //    the index but not in the directory, which is the actual way a curated
+  //    list rots. Regenerating and diffing cannot pass while wrong.
+  checkGenerated('skills/README.md', INDEX, renderIndex, 'npm run index', problems);
+  checkGenerated(
+    'docs/COVERAGE.md',
+    join(ROOT, 'docs', 'COVERAGE.md'),
+    renderCoverage,
+    'npm run coverage',
+    problems
+  );
+  checkGenerated(
+    'docs/badge-coverage.svg',
+    join(ROOT, 'docs', 'badge-coverage.svg'),
+    renderBadge,
+    'npm run coverage',
+    problems
+  );
+
+  const stale = [];
+  if (problems.some((p) => p.includes('is out of date'))) stale.push('generated files');
+  if (stale.length) {
+    notes.push(`    run \`npm run build-docs\` to regenerate stale output`);
   }
 
   if (json) {

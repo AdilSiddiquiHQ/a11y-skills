@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "If you use these skills in work you cite, cite this repository."
+title: a11y-skills
+abstract: >-
+  Thirty WCAG 2.2 procedures for coding agents. Each skill is a procedure with a
+  verification step and a named failure-mode list, every success-criterion
+  citation is checked against the spec, and the fixes that can be decided in a
+  DOM are proved by executable axe-core fixtures.
+type: software
+authors:
+  - alias: AdilSiddiquiHQ
+    name: Ninja.69
+repository-code: https://github.com/AdilSiddiquiHQ/a11y-skills
+url: https://github.com/AdilSiddiquiHQ/a11y-skills
+version: 0.2.0
+date-released: 2026-10-18
+license: MIT
+keywords:
+  - accessibility
+  - a11y
+  - wcag
+  - wcag-2.2
+  - agent-skills
+  - aria
+  - screen-reader
+  - axe-core

@@ -1,0 +1,7 @@
+{
+  "skill": "accessible-forms",
+  "case": "styled-signup",
+  "criterion": "SC 3.3.2 Labels or Instructions",
+  "why": "The same design, twice. The fields have visual text above them, but in the \"before\" those are <p> elements rather than <label>, so each input has no accessible name at all; the labels and the hint also fail SC 1.4.3 at 2.2:1 and 2.0:1. The fix keeps the design identical and changes the semantics and two colour values. This case is also the source of docs/demo.gif.",
+  "expectRules": ["label", "color-contrast"]
+}

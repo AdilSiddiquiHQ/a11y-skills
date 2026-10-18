@@ -1,0 +1,7 @@
+{
+  "skill": "accessible-name",
+  "case": "icon-only-button",
+  "criterion": "SC 4.1.2 Name, Role, Value",
+  "why": "An icon-only button with a decorative SVG and no label announces as just \"button\". The fix names the button; the icon itself should be hidden from assistive tech so the name is not doubled.",
+  "expectRules": ["button-name"]
+}

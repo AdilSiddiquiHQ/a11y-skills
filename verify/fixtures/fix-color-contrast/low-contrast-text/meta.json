@@ -1,0 +1,7 @@
+{
+  "skill": "fix-color-contrast",
+  "case": "low-contrast-text",
+  "criterion": "SC 1.4.3 Contrast (Minimum)",
+  "why": "Light grey body text on white measures about 2.1:1, well under the 4.5:1 minimum. The fix darkens the foreground only, keeping the hue and the background intact.",
+  "expectRules": ["color-contrast"]
+}

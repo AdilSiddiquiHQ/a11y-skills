@@ -1,7 +1,7 @@
 {
   "name": "a11y-skills",
-  "version": "0.1.0",
-  "description": "Agent Skills for web accessibility: six WCAG 2.2 procedures an agent can follow, with every criterion reference checked in CI.",
+  "version": "0.2.0",
+  "description": "30 WCAG 2.2 procedures for coding agents, with every criterion citation checked against the spec and the fixes proved by executable axe-core fixtures.",
   "type": "module",
   "bin": {
     "a11y-skills": "bin/a11y-skills.js"
@@ -10,24 +10,40 @@
     "bin",
     "skills",
     "verify",
+    "docs",
     "README.md",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
     "LICENSE"
   ],
   "scripts": {
     "list": "node bin/a11y-skills.js list",
+    "search": "node bin/a11y-skills.js search",
     "install-skills": "node bin/a11y-skills.js install",
     "verify": "node verify/verify-skills.js",
+    "fixtures": "node verify/run-fixtures.js",
+    "browser": "playwright install chromium",
+    "index": "node scripts/generate-index.js",
+    "coverage": "node scripts/generate-coverage.js",
+    "build-docs": "node scripts/generate-index.js && node scripts/generate-coverage.js",
+    "demo": "node scripts/make-demo.mjs",
     "security": "npx --yes github:AdilSiddiquiHQ/skillsleuth#v0.4.0 . --fail-on none",
-    "test": "node verify/verify-skills.js && node verify/verify-readme.js"
+    "test": "node verify/verify-skills.js && node verify/verify-readme.js",
+    "test:all": "npm test && npm run fixtures",
+    "check": "npm run build-docs && npm test && npm run fixtures"
   },
   "keywords": [
     "accessibility",
     "a11y",
     "wcag",
+    "wcag22",
     "agent-skills",
     "claude-code",
+    "opencode",
+    "aria",
     "screen-reader",
-    "aria"
+    "axe-core",
+    "accessibility-testing"
   ],
   "license": "MIT",
   "engines": {
@@ -40,5 +56,9 @@
   "homepage": "https://github.com/AdilSiddiquiHQ/a11y-skills#readme",
   "bugs": {
     "url": "https://github.com/AdilSiddiquiHQ/a11y-skills/issues"
+  },
+  "devDependencies": {
+    "axe-core": "^4.14.0",
+    "playwright": "^1.64.1"
   }
 }

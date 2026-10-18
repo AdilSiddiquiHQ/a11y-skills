@@ -1,0 +1,46 @@
+name: A skill is wrong
+description: A skill says something incorrect, or misses a case that matters.
+labels: [correctness]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A wrong accessibility claim is worse than no skill, so these are
+        prioritised over additions. Thank you for taking the time.
+  - type: input
+    id: skill
+    attributes:
+      label: Which skill
+      placeholder: skills/fix-color-contrast
+    validations:
+      required: true
+  - type: textarea
+    id: says
+    attributes:
+      label: What it says
+      description: Quote the line, or link it.
+    validations:
+      required: true
+  - type: textarea
+    id: should
+    attributes:
+      label: What it should say
+    validations:
+      required: true
+  - type: textarea
+    id: source
+    attributes:
+      label: Source
+      description: |
+        A link to the WCAG 2.2 specification, a WAI-ARIA Authoring Practices
+        pattern, or a bug report. "It does not work in our app" is useful too —
+        say what the assistive technology actually announced.
+    validations:
+      required: false
+  - type: checkboxes
+    id: fixture
+    attributes:
+      label: Fixture
+      options:
+        - label: This could be demonstrated with a before/after fixture pair
+          required: false

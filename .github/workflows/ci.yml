@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 jobs:
-  test:
+  verify:
     name: Verify content
     runs-on: ubuntu-latest
     steps:
@@ -19,10 +19,21 @@ jobs:
         with:
           node-version: '20'
 
-      # Structure, frontmatter, every WCAG citation against the spec, index
-      # freshness, and the README's sample output against the real thing.
-      - name: Verify skills
+      # Deliberately no `npm ci` in this job. The content gate has no runtime
+      # dependencies at all, so it stays fast and cannot be broken by a
+      # supply-chain problem in a devDependency.
+      - name: Verify skills, generated docs and README
         run: npm test
+
+      - name: The build docs are not stale
+        run: |
+          set -euo pipefail
+          npm run build-docs
+          if ! git diff --quiet; then
+            echo "::error::generated files are out of date — run npm run build-docs and commit"
+            git diff --stat
+            exit 1
+          fi
 
       - name: List the skills
         run: node bin/a11y-skills.js list
@@ -46,6 +57,37 @@ jobs:
           node bin/a11y-skills.js install --dest "$RUNNER_TEMP/skills" | tee /tmp/second.txt
           grep -q "skip" /tmp/second.txt
 
+      - name: Search and criteria output is machine readable
+        run: |
+          set -euo pipefail
+          node bin/a11y-skills.js search "dialog focus" --json > /tmp/search.json
+          node -e "const r=require('/tmp/search.json'); if(!r.results.length) process.exit(1); console.log('search matched', r.results.length)"
+          node bin/a11y-skills.js criteria 1.4.3 --json > /tmp/criteria.json
+          node -e "const r=require('/tmp/criteria.json'); if(!r.skills.length) process.exit(1); console.log('SC 1.4.3 covered by', r.skills.join(', '))"
+
+  fixtures:
+    name: Run executable fixtures
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - run: npm ci
+
+      # A real browser, because colour contrast cannot be computed without
+      # layout and jsdom has none. Without this the fixtures would pass by
+      # accident: axe reports contrast as "incomplete" when it cannot measure it.
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      # Every before.html must trip the rules it names; every after.html must be
+      # completely clean, best-practice rules included.
+      - name: Assert every fixture
+        run: npm run fixtures
+
   security:
     name: Scan our own skills
     runs-on: ubuntu-latest
@@ -62,7 +104,7 @@ jobs:
       # Scanning the library with the scanner this project cross-promotes.
       # --fail-on none on purpose: skills legitimately contain HTML and code
       # examples, so the first job is to read the findings rather than to let
-      # them break the build. Tighten this once the baseline is understood.
+      # them break the build.
       - name: Run SkillSleuth on this repository
         run: |
           npx --yes github:AdilSiddiquiHQ/skillsleuth#v0.4.0 . \

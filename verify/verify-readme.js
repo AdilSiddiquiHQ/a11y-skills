@@ -18,6 +18,7 @@ import { spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { coverageStats } from '../scripts/generate-coverage.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, '..');
@@ -67,6 +68,35 @@ const count = skillLines.length;
 const badge = `skills-${count}-purple`;
 if (!README.includes(badge)) {
   problems.push(`README badge says a different skill count (expected: ${badge})`);
+}
+
+// The coverage numbers are the loudest claim in the README, so they get pinned
+// too. Without this the headline "52 of 86" keeps looking right for months after
+// a skill changes what it covers.
+const s = coverageStats();
+const spec = JSON.parse(
+  readFileSync(join(ROOT, 'verify', 'wcag-2.2.json'), 'utf8')
+);
+const level = (id) => spec.criteria[id].level;
+const pct = (n, d) => String(Math.round((n / d) * 100));
+const atLevel = (name) => s.all.filter((id) => level(id) === name);
+const coveredAt = (name) => atLevel(name).filter((id) => s.addressed.has(id)).length;
+
+const claims = [
+  [`${s.covered.length} of ${s.all.length}`, 'criteria addressed'],
+  [`${s.fixtureCases} executable fixtures`, 'fixture count'],
+  [`executable%20fixtures-${s.fixtureCases}-orange`, 'fixture badge'],
+  [`${pct(coveredAt('A'), atLevel('A').length)}% of Level A`, 'Level A coverage'],
+  [`${pct(coveredAt('AA'), atLevel('AA').length)}% of Level AA`, 'Level AA coverage'],
+  [`| Criteria **with an executable fixture** (the fix is run) | ${s.fixtureIds.length} |`, 'fixture coverage row'],
+];
+
+for (const [needle, what] of claims) {
+  // Compared against whitespace-normalised text so that a claim spanning a line
+  // break in the README still counts as present.
+  if (!normalize(README).includes(normalize(needle))) {
+    problems.push(`README is stale: it does not state "${needle}" (${what})`);
+  }
 }
 
 if (problems.length > 0) {

@@ -1,0 +1,44 @@
+name: Request a skill
+description: A recurring accessibility problem this library does not cover yet.
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The most persuasive version of this request is a problem you keep hitting
+        in code review, described concretely enough that a procedure could be
+        written for it. `docs/COVERAGE.md` lists the criteria that are not covered
+        yet, with reasons.
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem, as you would describe it to a colleague
+      placeholder: |
+        Our toast notifications are announced twice, and once on page load. The
+        fix we keep reaching for is to re-create the live region every time, which
+        makes it worse.
+    validations:
+      required: true
+  - type: input
+    id: criteria
+    attributes:
+      label: Success criteria it would address, if you know them
+      placeholder: SC 4.1.3 Status Messages
+    validations:
+      required: false
+  - type: textarea
+    id: failure-modes
+    attributes:
+      label: Things that go wrong when people try to fix it
+      description: This becomes the failure-mode list, which is the most useful part of a skill.
+    validations:
+      required: false
+  - type: checkboxes
+    id: decidable
+    attributes:
+      label: Could this be checked automatically?
+      options:
+        - label: Partly — a DOM assertion could catch some of it, and I would write a fixture
+          required: false
+        - label: No — it needs a keyboard or a screen reader, and the skill should say so
+          required: false

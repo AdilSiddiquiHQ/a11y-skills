@@ -1,0 +1,7 @@
+{
+  "skill": "svg-and-icons",
+  "case": "svg-without-accessible-name",
+  "criterion": "SC 1.1.1 Non-text Content",
+  "why": "An inline SVG with role=\"img\" and no title or aria-label is an image with no accessible name. A <title> element is the most portable fix and also produces a native tooltip.",
+  "expectRules": ["svg-img-alt"]
+}

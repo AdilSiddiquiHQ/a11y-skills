@@ -1,0 +1,7 @@
+{
+  "skill": "page-title-and-language",
+  "case": "missing-lang-and-title",
+  "criterion": "SC 3.1.1 Language of Page",
+  "why": "No lang attribute means a screen reader guesses the pronunciation, and no title means the browser tab and the window list are useless. Both are single attributes.",
+  "expectRules": ["html-has-lang", "document-title"]
+}

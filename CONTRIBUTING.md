@@ -1,23 +1,32 @@
 # Contributing
 
-The skills are the product. A pull request that adds one, or fixes something
-wrong in one, is the most valuable thing you can send. Everything here is plain
-Markdown and zero-dependency Node, so there is nothing to build.
+The skills are the product. A pull request that adds one, fixes something wrong
+in one, or adds a fixture that proves one, is the most valuable thing you can
+send. Everything here is plain Markdown and zero-dependency Node — there is
+nothing to build.
+
+The full specification for a skill is [`docs/AUTHORING.md`](docs/AUTHORING.md).
+It is enforced by `verify/verify-skills.js`, so read it before writing one.
+
+```bash
+npm test         # structure, citations, generated docs, README accuracy (no browser)
+npm run fixtures # run every before/after pair through axe-core in Chromium
+npm run check    # both, plus regenerating docs
+```
 
 ## Improving a skill
 
-1. Read an existing skill to copy the shape. They are deliberately uniform —
-   an agent follows the structure, so changing it changes behaviour.
-2. Keep the voice: second person, imperative, no hedging. "Check the ratio" not
-   "you may want to consider checking the ratio."
-3. Cite real criteria, in `SC <number>` form, and put them in the frontmatter
-   `wcag:` list too.
-4. Add the case to **Failure modes**. If you found a real bug in the wild, say
-   what it was; that is the most useful sentence in the file.
-
-```bash
-npm test        # structure, citations, index freshness, README accuracy
-```
+1. Read an existing skill to copy the shape. They are deliberately uniform — an
+   agent follows the structure, so changing it changes behaviour.
+2. Keep the voice: second person, imperative, no hedging. "Check the ratio", not
+   "you may want to consider checking the ratio".
+3. Cite real criteria on the `**Criteria:**` line, in `SC <number>` form, with
+   the spec's exact name.
+4. Prefer the platform. A native `<dialog>` beats an ARIA dialog, a `<button>`
+   beats a `div` with a `role`, and the skill must say so.
+5. Add the case to **Failure modes**. If you found a real bug in the wild, say
+   what it was — that is the most useful sentence in the file.
+6. If the advice is decidable in a DOM, add a fixture for it.
 
 ## Adding a skill
 
@@ -47,38 +56,76 @@ Numbered steps. Show code. Cite the criterion next to the claim it justifies.
 ## Verify
 
 How to confirm the fix worked — a check, a command, or a keyboard walkthrough.
-"Verify" means the reader can tell success from failure, not "looks right".
+"Verify" means the reader can tell success from failure, not "looks right". If the
+step needs a human, say so rather than implying a pass.
 
 ## Failure modes
 
-The ways this goes wrong in practice. At least three. This section is the
-reason the skill exists; the procedure alone is a blog post.
+The ways this goes wrong in practice. At least four. This section is the reason
+the skill exists; the procedure alone is a blog post.
 ```
 
 Two rules about the metadata that are not obvious:
 
-- **Nothing but `name` and `description` goes in the frontmatter.** Criteria go
-  on the `**Criteria:**` line in the body. An extra frontmatter key is not
-  portable — strict parsers reject unknown keys, and SkillSleuth reports it as
+- **Nothing but `name` and `description` goes in the frontmatter.** Criteria go on
+  the `**Criteria:**` line in the body. An extra frontmatter key is not portable —
+  strict parsers reject unknown keys, and SkillSleuth reports it as
   `SG-META-009`. That finding is correct; do not suppress it.
 - **Criterion names must match the spec exactly.** `SC 1.4.3 Contrast (Minimum)`
   is right; `SC 1.4.3 Minimum Contrast` fails the build. Renaming a criterion in
   your own words makes the citation uncheckable against the source.
 
-Then add it to the **By task** table in [`skills/README.md`](../skills/README.md).
+You do **not** edit [`skills/README.md`](skills/README.md) or
+[`docs/COVERAGE.md`](docs/COVERAGE.md) — both are generated. Run:
 
-`npm test` enforces all of that. It will reject: a criterion that is not in
-WCAG 2.2, a criterion whose name does not match the spec, a citation of the
-removed 4.1.1, a `name` that does not match the directory, a `description` that
-does not start with "Use when", a missing section, a skill with no example, and
-a skill missing from the index.
+```bash
+npm run build-docs
+```
+
+CI fails if they are stale, so a forgotten regeneration is caught immediately
+rather than left to rot.
+
+## Adding a fixture
+
+A fixture is what separates "we say this works" from "this works". It lives at
+`verify/fixtures/<skill>/<case>/` and is three files:
+
+```
+meta.json    which rules must fire, and the criterion this is evidence for
+before.html  the mistake — must trigger every rule named in meta.json
+after.html   the fix — must be completely clean
+```
+
+`meta.json`:
+
+```json
+{
+  "skill": "fix-color-contrast",
+  "case": "low-contrast-text",
+  "criterion": "SC 1.4.3 Contrast (Minimum)",
+  "why": "One sentence on what this pair demonstrates.",
+  "expectRules": ["color-contrast"]
+}
+```
+
+The rule IDs are axe-core's, not ours — `label`, `image-alt`, `button-name`,
+`color-contrast`, `heading-order`, `meta-viewport`. `after.html` must have **zero**
+violations of any impact, not just the rule under test: best-practice rules such
+as `region`, `landmark-one-main` and `page-has-heading-one` count too. That is
+deliberate — it stops a fixture from fixing one thing and quietly breaking
+another, and it means `after.html` doubles as a worked example of a clean page.
+
+Watch for rules that pass for the wrong reason. axe-core's `label` rule accepts a
+non-empty `placeholder` as a label, so a placeholder-only field cannot be used to
+demonstrate a missing label. When a fixture behaves unexpectedly, find out why
+before changing the assertion — that is usually where the interesting finding is.
 
 ## Adding a criterion
 
-`verify/wcag-2.2.json` is the source of truth and is checked against the spec,
-not against memory. If you add or change a criterion, link the spec section in
-the pull request. Getting that file wrong makes every skill wrong at once,
-which is exactly why it is a separate, reviewable file.
+`verify/wcag-2.2.json` is the source of truth and is checked against the spec, not
+against memory. If you add or change a criterion, link the spec section in the
+pull request. Getting that file wrong makes every skill wrong at once, which is
+exactly why it is a separate, reviewable file.
 
 ## Reporting a wrong skill
 
@@ -91,4 +138,6 @@ additions.
 - A skill that restates a criterion without saying how to check it.
 - Anything that claims an automated tool can establish conformance.
 - Skills that duplicate an existing one. Extend the existing skill instead.
+- An accessibility fix that removes a focus indicator, or replaces a working
+  native control with a hand-rolled ARIA one.
 - Content that is not accessibility. This repository is deliberately narrow.

@@ -1,0 +1,7 @@
+{
+  "skill": "accessible-forms",
+  "case": "input-without-label",
+  "criterion": "SC 3.3.2 Labels or Instructions",
+  "why": "An input with no label at all. Note what this fixture deliberately does NOT do: it does not use a placeholder-only field, because axe-core's `label` rule accepts a non-empty placeholder as a label. A placeholder-only field therefore passes automated checks and still fails SC 3.3.2 for anyone who starts typing. That blind spot is why this skill exists and why the harness cannot be the only proof.",
+  "expectRules": ["label"]
+}

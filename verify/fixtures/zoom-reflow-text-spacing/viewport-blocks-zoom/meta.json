@@ -1,0 +1,7 @@
+{
+  "skill": "zoom-reflow-text-spacing",
+  "case": "viewport-blocks-zoom",
+  "criterion": "SC 1.4.4 Resize Text",
+  "why": "user-scalable=no and maximum-scale=1 stop pinch zoom on mobile. Nothing in the design requires it; it is almost always cargo-culted from a reset.",
+  "expectRules": ["meta-viewport"]
+}

@@ -152,3 +152,10 @@ Walk the failure path, not the happy path — that is where these criteria live:
   than announcing nothing. One summary region is enough.
 - **Disabled submit buttons.** A user with no mouse may never discover why the
   form will not submit. Keep it enabled and report errors on submit instead.
+- **Treating a clean automated report as proof this step is done.** axe-core's
+  `label` rule accepts a non-empty `placeholder` as a label, so a
+  placeholder-only field passes a full audit and still fails SC 3.3.2: the text
+  disappears the moment someone starts typing, and it is not announced as a
+  label when the field is focused from the middle of a form. The fixture for this
+  skill is built deliberately without a placeholder for that reason — if it used
+  one, the harness would have reported a pass on a form that is not usable.

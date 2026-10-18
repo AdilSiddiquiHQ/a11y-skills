@@ -1,0 +1,7 @@
+{
+  "skill": "headings-and-landmarks",
+  "case": "content-outside-landmarks",
+  "criterion": "SC 2.4.1 Bypass Blocks",
+  "why": "Content that is not inside a landmark cannot be skipped to. A screen reader user lists the landmarks and finds nothing to jump to.",
+  "expectRules": ["landmark-one-main", "region"]
+}
