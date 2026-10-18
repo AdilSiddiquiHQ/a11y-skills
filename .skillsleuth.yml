@@ -1,0 +1,13 @@
+# SkillSleuth configuration for this repository.
+#
+# CI scans the skills with SkillSleuth (see .github/workflows/ci.yml). The
+# failure threshold is deliberately not set to `high` yet: these skills discuss
+# security-adjacent markup and contain code examples, and the first honest thing
+# to do is read what it actually reports on content that is not an attack,
+# rather than tune the threshold until the build goes green.
+
+fail-on: high
+
+thresholds:
+  review: 30
+  fail: 70

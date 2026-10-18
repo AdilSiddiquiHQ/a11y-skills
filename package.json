@@ -1,0 +1,44 @@
+{
+  "name": "a11y-skills",
+  "version": "0.1.0",
+  "description": "Agent Skills for web accessibility: six WCAG 2.2 procedures an agent can follow, with every criterion reference checked in CI.",
+  "type": "module",
+  "bin": {
+    "a11y-skills": "bin/a11y-skills.js"
+  },
+  "files": [
+    "bin",
+    "skills",
+    "verify",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "list": "node bin/a11y-skills.js list",
+    "install-skills": "node bin/a11y-skills.js install",
+    "verify": "node verify/verify-skills.js",
+    "security": "npx --yes github:AdilSiddiquiHQ/skillsleuth#v0.4.0 . --fail-on none",
+    "test": "node verify/verify-skills.js && node verify/verify-readme.js"
+  },
+  "keywords": [
+    "accessibility",
+    "a11y",
+    "wcag",
+    "agent-skills",
+    "claude-code",
+    "screen-reader",
+    "aria"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AdilSiddiquiHQ/a11y-skills.git"
+  },
+  "homepage": "https://github.com/AdilSiddiquiHQ/a11y-skills#readme",
+  "bugs": {
+    "url": "https://github.com/AdilSiddiquiHQ/a11y-skills/issues"
+  }
+}

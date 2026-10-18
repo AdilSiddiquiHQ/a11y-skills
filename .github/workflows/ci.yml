@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Verify content
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # Structure, frontmatter, every WCAG citation against the spec, index
+      # freshness, and the README's sample output against the real thing.
+      - name: Verify skills
+        run: npm test
+
+      - name: List the skills
+        run: node bin/a11y-skills.js list
+
+      # The installer is the first thing anyone runs. If it is broken, nothing
+      # else in the repository matters.
+      - name: Installer copies every skill
+        run: |
+          set -euo pipefail
+          node bin/a11y-skills.js install --dry-run
+          node bin/a11y-skills.js install --dest "$RUNNER_TEMP/skills"
+          expected=$(ls -d skills/*/ | wc -l | tr -d ' ')
+          actual=$(ls -d "$RUNNER_TEMP/skills"/*/ | wc -l | tr -d ' ')
+          echo "expected $expected skills, installed $actual"
+          test "$expected" = "$actual"
+          test -f "$RUNNER_TEMP/skills/audit-component/SKILL.md"
+
+      - name: Re-installing does not clobber without --force
+        run: |
+          set -euo pipefail
+          node bin/a11y-skills.js install --dest "$RUNNER_TEMP/skills" | tee /tmp/second.txt
+          grep -q "skip" /tmp/second.txt
+
+  security:
+    name: Scan our own skills
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # Scanning the library with the scanner this project cross-promotes.
+      # --fail-on none on purpose: skills legitimately contain HTML and code
+      # examples, so the first job is to read the findings rather than to let
+      # them break the build. Tighten this once the baseline is understood.
+      - name: Run SkillSleuth on this repository
+        run: |
+          npx --yes github:AdilSiddiquiHQ/skillsleuth#v0.4.0 . \
+            --fail-on none --sarif a11y-skills.sarif
+
+      - name: Upload SARIF
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: a11y-skills.sarif
+        continue-on-error: true

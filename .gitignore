@@ -1,0 +1,19 @@
+# Dependencies (there are none; this is for safety if that ever changes)
+node_modules/
+
+# Build output
+dist/
+
+# Generated scan output
+a11y-skills.sarif
+a11y-skills-report.json
+.skillsleuth-cache/
+
+# Editors / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Logs
+*.log
