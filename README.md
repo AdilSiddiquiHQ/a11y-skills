@@ -448,6 +448,7 @@ scripts/make-cli-demo.mjs        → docs/cli.gif, built from real CLI output
 lib/chromium.js                  finding a browser, shared by the CLI and the harness
 bin/a11y-skills.js               the zero-dependency CLI
 action.yml                       the GitHub Action wrapping `audit`
+scripts/ci-audit.sh              what the Action runs — a script, so CI can test it
 docs/demo.gif                    generated: axe-core's findings, then the fix
 docs/cli.gif                     generated: the real CLI output
 docs/AUTHORING.md                the spec a skill must satisfy

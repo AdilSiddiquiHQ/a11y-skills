@@ -67,6 +67,12 @@ rather than assuming it passed.
     with `axeOptions` in that fixture's `meta.json`. `target-size` and
     `p-as-heading` are both off by default, so a fixture that names one of them
     without enabling it passes while testing nothing.
+12. **No logic in `action.yml`.** Its audit step runs `scripts/ci-audit.sh`, and
+    that is all it does. A `run:` block executes only on the runner, which makes it
+    the one place here that no test can reach — and it is exactly where two real
+    bugs lived, one of which reported every audit as zero findings while the CLI
+    beneath it exited 1. Change the script, and change the assertions in the
+    fixtures job with it.
 
 ## Facts about axe-core that are easy to get wrong
 

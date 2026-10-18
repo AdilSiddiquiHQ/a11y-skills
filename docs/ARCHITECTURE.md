@@ -133,6 +133,15 @@ CLI cannot disagree about what counts as a usable Chromium. It is deliberately
 dependency-free: `audit` has to be able to report "I found no browser" without
 loading a framework to work it out.
 
+The Action's step body is `scripts/ci-audit.sh` rather than an inline `run:` block,
+for the same reason the skills have fixtures: shell that only ever executes through
+`uses:` is shell nobody has run. As a script it runs in the fixtures job, with the
+environment a runner provides, and the assertions are on the things that matter —
+the exit code, the `GITHUB_OUTPUT` values, and whether the job summary names the
+skill that fixes the finding. Two of this repository's real bugs came out of
+writing that test, including one that would have made every Action job report zero
+findings while the CLI beneath it exited 1.
+
 ## Decisions worth knowing
 
 **Zero runtime dependencies.** The skills are Markdown; the CLI is Node standard
