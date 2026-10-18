@@ -1,0 +1,12 @@
+{
+  "skill": "wcag22-new-criteria",
+  "case": "undersized-targets",
+  "criterion": "SC 2.5.8 Target Size (Minimum)",
+  "why": "SC 2.5.8 is one of the two criteria WCAG 2.2 added, and axe ships its target-size rule DISABLED, so a default audit never mentions it. This fixture enables the rule explicitly via axeOptions, which is the only way to test a criterion most tooling silently skips. The after is exactly 24x24 - the boundary - so the fixture also pins the threshold rather than approximating it.",
+  "expectRules": ["target-size"],
+  "axeOptions": {
+    "rules": {
+      "target-size": { "enabled": true }
+    }
+  }
+}

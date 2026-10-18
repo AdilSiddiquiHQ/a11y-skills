@@ -15,7 +15,7 @@ import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
-import { homedir } from 'node:os';
+import { findChromium as findChromiumBinary } from '../lib/chromium.js';
 
 const require = createRequire(import.meta.url);
 const HIM = dirname(fileURLToPath(import.meta.url));
@@ -29,46 +29,13 @@ const AXE_SOURCE = readFileSync(AXE_PATH, 'utf8');
 /**
  * Locate a Chromium to drive.
  *
- * Order matters: an explicit override, then a search of the Playwright browser
- * cache. The search exists because the cached browser is shared with whatever
- * else installed Playwright, and because `playwright-core` does not download
- * anything — so on a machine where the browsers came from somewhere else, the
- * default path does not exist. "No browser found" is a much worse error than
- * twenty lines of searching.
+ * The search lives in lib/chromium.js so the CLI and this harness agree on it.
+ * Here it is turned into a hard error, because a fixture run that cannot find a
+ * browser has nothing to report.
  */
 export function findChromium() {
-  if (process.env.CHROMIUM_PATH && existsSync(process.env.CHROMIUM_PATH)) {
-    return process.env.CHROMIUM_PATH;
-  }
-
-  const cache = join(homedir(), 'Library', 'Caches', 'ms-playwright');
-  const linuxCache = join(homedir(), '.cache', 'ms-playwright');
-  const roots = [cache, linuxCache, join(homedir(), 'AppData', 'Local', 'ms-playwright')];
-
-  const candidates = [];
-  for (const root of roots) {
-    if (!existsSync(root)) continue;
-    for (const entry of readdirSync(root)) {
-      if (entry.startsWith('chromium_headless_shell-')) {
-        candidates.push(
-          join(root, entry, 'chrome-headless-shell-mac-arm64', 'chrome-headless-shell'),
-          join(root, entry, 'chrome-headless-shell-mac-x64', 'chrome-headless-shell'),
-          join(root, entry, 'chrome-headless-shell-linux64', 'chrome-headless-shell')
-        );
-      }
-      if (entry.startsWith('chromium-')) {
-        candidates.push(
-          join(root, entry, 'chrome-linux', 'chrome'),
-          join(root, entry, 'chrome-mac-arm64', 'Google Chrome for Testing.app', 'Contents', 'MacOS', 'Google Chrome for Testing'),
-          join(root, entry, 'chrome-mac', 'Chromium.app', 'Contents', 'MacOS', 'Chromium')
-        );
-      }
-    }
-  }
-
-  const found = candidates.find((p) => existsSync(p));
+  const found = findChromiumBinary();
   if (found) return found;
-
   throw new Error(
     'No Chromium found. Install one with `npx playwright install chromium`, ' +
       'or point CHROMIUM_PATH at an existing binary.'
@@ -87,15 +54,21 @@ export async function openBrowser() {
  * Everything axe reports is returned, including best-practice rules, because
  * the fixture contract is stricter than a WCAG filter: an `after.html` must be
  * completely clean, not merely clean of the rule the fixture is about.
+ *
+ * `options` is passed straight to `axe.run`. Fixtures use it for one thing: some
+ * rules axe ships disabled, and a fixture that claims to test SC 2.5.8 Target
+ * Size has to turn `target-size` on, because a default scan would simply never
+ * mention it. A test that cannot fail is not a test.
  */
-export async function scanHtml(browser, html) {
+export async function scanHtml(browser, html, options = {}) {
   const page = await browser.newPage();
   try {
     await page.setContent(html, { waitUntil: 'load' });
     await page.addScriptTag({ content: AXE_SOURCE });
-    const result = await page.evaluate(async () => {
+    const result = await page.evaluate(async (runOptions) => {
       const r = await window.axe.run(document, {
         resultTypes: ['violations'],
+        ...runOptions,
       });
       return r.violations.map((v) => ({
         id: v.id,
@@ -107,7 +80,7 @@ export async function scanHtml(browser, html) {
           summary: n.failureSummary?.split('\n').filter(Boolean)[0] || '',
         })),
       }));
-    });
+    }, options);
     return result;
   } finally {
     await page.close();

@@ -1,0 +1,7 @@
+{
+  "skill": "semantic-html",
+  "case": "lists-from-divs",
+  "criterion": "SC 1.3.1 Info and Relationships",
+  "why": "Four rules in one pair, because they are one mistake wearing four hats. The steps are flexbox divs inside a ul (list), stray li elements sit in a div rather than a list (listitem), the label/value block is spans inside a dl (definition-list), and a dt/dd pair floats free of any dl (dlitem). The after uses the elements whose job this is, and keeps role=\"list\" on the marker-less list so Safari does not drop the semantics.",
+  "expectRules": ["list", "listitem", "definition-list", "dlitem"]
+}

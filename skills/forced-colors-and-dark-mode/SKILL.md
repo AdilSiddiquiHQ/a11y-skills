@@ -5,7 +5,7 @@ description: Use when contrast fails in dark mode, when a component disappears i
 
 # Forced colors and dark mode
 
-**Criteria:** SC 1.4.3 Contrast (Minimum), SC 1.4.11 Non-text Contrast, SC 1.4.1 Use of Color, SC 1.4.6 Contrast (Enhanced)
+**Criteria:** SC 1.4.3 Contrast (Minimum), SC 1.4.6 Contrast (Enhanced), SC 1.4.11 Non-text Contrast, SC 1.4.1 Use of Color, SC 1.3.3 Sensory Characteristics
 
 Every contrast claim is a claim about a specific pair of colours in a specific
 theme and state. The mistake that matters most is auditing the light theme and
@@ -135,6 +135,26 @@ user chose for visibility.
    /* Not acceptable: opting the entire card out of the user's theme. */
    .card { forced-color-adjust: none; }
    ```
+
+7. **Never name a thing by its colour, shape, size or position alone (SC 1.3.3,
+   Level A).** This is the criterion that catches instructions, not decoration:
+   "click the round button", "tap the green one", "see the panel on the right". A
+   user who cannot see colour, or who is reading the page linearly, has no way to
+   act on it. Add the non-sensory identifier the instruction was standing in for.
+
+   ```html
+   <!-- Fails SC 1.3.3 — colour and position are the only identifiers -->
+   <p>Press the green button to continue.</p>
+
+   <!-- Passes — the instruction names the control -->
+   <p>Press <strong>Continue</strong> to move on.</p>
+   ```
+
+   It also covers state that is carried by colour alone, which is why it sits next to
+   SC 1.4.1 here: a red row that means "failed" needs a word or an icon, and a chart
+   whose series are distinguished only by hue needs a second channel. SC 1.3.3 is
+   about the *instruction*, SC 1.4.1 about the *information*; the same fix usually
+   satisfies both.
 
 ## Verify
 

@@ -5,7 +5,7 @@ description: Use when building or reviewing a form, when a screen reader cannot 
 
 # Accessible forms
 
-**Criteria:** SC 1.3.1 Info and Relationships, SC 1.3.5 Identify Input Purpose, SC 3.3.1 Error Identification, SC 3.3.2 Labels or Instructions, SC 3.3.3 Error Suggestion, SC 3.3.7 Redundant Entry, SC 3.3.8 Accessible Authentication (Minimum), SC 4.1.3 Status Messages, SC 2.4.6 Headings and Labels
+**Criteria:** SC 1.3.1 Info and Relationships, SC 1.3.5 Identify Input Purpose, SC 3.3.1 Error Identification, SC 3.3.2 Labels or Instructions, SC 3.3.3 Error Suggestion, SC 3.3.4 Error Prevention (Legal, Financial, Data), SC 3.3.7 Redundant Entry, SC 3.3.8 Accessible Authentication (Minimum), SC 4.1.2 Name, Role, Value, SC 4.1.3 Status Messages, SC 2.4.6 Headings and Labels
 
 Forms are where accessibility failures cost the most, because they are where a
 user is trying to *complete a task*, not read a page. This covers labels,
@@ -124,6 +124,60 @@ errors, autofill and the WCAG 2.2 criteria that most reviews miss.
    Blocking paste (`onpaste="return false"`) is a failure. So is a code field
    that refuses to accept a pasted value or splits into boxes with no paste path.
 
+9. **Use the native control, and if you cannot, expose name, role and value
+   (SC 4.1.2).** A `<label for>` only works on a real form element. The moment a
+   control becomes a `<div role="checkbox">` or a styled `<span>`, three things
+   the browser was providing for free become your responsibility: the **name**
+   (what this control is), the **role** (what kind of control it is) and the
+   **value or state** (checked, expanded, selected — and it must change when the
+   user changes it).
+
+   ```html
+   <!-- Fails SC 4.1.2 — a label pointing at a div does nothing -->
+   <label for="terms">I agree</label>
+   <div id="terms" class="checkbox" onclick="toggle()"></div>
+
+   <!-- Passes — the element carries the role, the state, the name, and the keyboard -->
+   <input type="checkbox" id="terms" name="terms">
+   <label for="terms">I agree</label>
+
+   <!-- Only if no native element fits: state it all explicitly -->
+   <div role="checkbox" tabindex="0" aria-checked="false"
+        aria-labelledby="terms-label" aria-describedby="terms-hint">…</div>
+   ```
+
+   `aria-checked` is a live value, not a decoration: if it stays `false` after the
+   user ticks the box, the control is worse than an unlabelled one, because it
+   confidently reports the wrong state. Prefer the native element — it also brings
+   keyboard handling, focus behaviour and form submission that an ARIA
+   reimplementation has to rebuild and usually gets wrong.
+
+10. **For anything legal or financial, let the user check before it is final
+   (SC 3.3.4, Level AA).** This criterion is narrower than it sounds and applies to
+   submissions that are *reversible* in one of three ways: the change can be
+   undone, the data can be checked before committing, or the user confirms before
+   the final submission. At least one is required when the interaction causes a
+   legal commitment, a financial transaction, or the modification or deletion of
+   user-controlled data.
+
+   ```html
+   <!-- The check-before-commit pattern: a review step the user must pass -->
+   <section aria-labelledby="review-heading">
+     <h2 id="review-heading">Check your order</h2>
+     <dl>
+       <dt>Total</dt><dd>£86.40</dd>
+       <dt>Deliver to</dt><dd>21 Example Street, Bristol</dd>
+     </dl>
+     <button type="submit">Place order</button>
+     <button type="button" data-edit>Edit details</button>
+   </section>
+   ```
+
+   `confirm()` dialogs and a "deleted items" trash count, but a review step is the
+   right shape here: the user can *read* what they are about to commit, which is
+   the point. Note the overlap with SC 3.3.7 Redundant Entry — a good checkout
+   shows the address you already typed rather than asking for it again.
+
 ## Verify
 
 Walk the failure path, not the happy path — that is where these criteria live:
@@ -132,6 +186,7 @@ Walk the failure path, not the happy path — that is where these criteria live:
 |---|---|---|
 | Submit with every field empty | errors are text, tied to inputs, focus lands on the first | 3.3.1, 3.3.3 |
 | Read a field with a screen reader | name, required state, and hint are announced | 3.3.2, 1.3.1 |
+| Read a custom (div-based) control | role, name and checked/expanded state are announced, and change when you interact | 4.1.2 |
 | Trigger the browser's autofill | each field fills | 1.3.5 |
 | Complete step 2, go back to step 1 | what you typed is still there | 3.3.7 |
 | Paste a password reset code | it pastes | 3.3.8 |

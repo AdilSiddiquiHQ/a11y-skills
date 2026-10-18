@@ -1,0 +1,902 @@
+{
+  "source": "axe-core",
+  "version": "4.14.0",
+  "generatedBy": "scripts/generate-axe-rules.js",
+  "note": "Snapshot of axe-core's rules and the WCAG criteria each tests. Regenerate with `npm run axe-rules`.",
+  "unknownCriteria": [
+    "4.1.1"
+  ],
+  "rules": {
+    "accesskeys": {
+      "help": "accesskey attribute value should be unique",
+      "url": "https://dequeuniversity.com/rules/axe/accesskeys?application=axeAPI",
+      "criteria": [],
+      "bestPractice": true,
+      "enabledByDefault": true
+    },
+    "area-alt": {
+      "help": "Active <area> elements must have alternative text",
+      "url": "https://dequeuniversity.com/rules/axe/area-alt?application=axeAPI",
+      "criteria": [
+        "2.4.4",
+        "4.1.2"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "aria-allowed-attr": {
+      "help": "Elements must only use supported ARIA attributes",
+      "url": "https://dequeuniversity.com/rules/axe/aria-allowed-attr?application=axeAPI",
+      "criteria": [
+        "4.1.2"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "aria-allowed-role": {
+      "help": "ARIA role should be appropriate for the element",
+      "url": "https://dequeuniversity.com/rules/axe/aria-allowed-role?application=axeAPI",
+      "criteria": [],
+      "bestPractice": true,
+      "enabledByDefault": true
+    },
+    "aria-braille-equivalent": {
+      "help": "aria-braille attributes must have a non-braille equivalent",
+      "url": "https://dequeuniversity.com/rules/axe/aria-braille-equivalent?application=axeAPI",
+      "criteria": [
+        "4.1.2"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "aria-command-name": {
+      "help": "ARIA commands must have an accessible name",
+      "url": "https://dequeuniversity.com/rules/axe/aria-command-name?application=axeAPI",
+      "criteria": [
+        "4.1.2"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "aria-conditional-attr": {
+      "help": "ARIA attributes must be used as specified for the element's role",
+      "url": "https://dequeuniversity.com/rules/axe/aria-conditional-attr?application=axeAPI",
+      "criteria": [
+        "4.1.2"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "aria-deprecated-role": {
+      "help": "Deprecated ARIA roles must not be used",
+      "url": "https://dequeuniversity.com/rules/axe/aria-deprecated-role?application=axeAPI",
+      "criteria": [
+        "4.1.2"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "aria-dialog-name": {
+      "help": "ARIA dialog and alertdialog nodes should have an accessible name",
+      "url": "https://dequeuniversity.com/rules/axe/aria-dialog-name?application=axeAPI",
+      "criteria": [],
+      "bestPractice": true,
+      "enabledByDefault": true
+    },
+    "aria-hidden-body": {
+      "help": "aria-hidden=\"true\" must not be present on the document body",
+      "url": "https://dequeuniversity.com/rules/axe/aria-hidden-body?application=axeAPI",
+      "criteria": [
+        "1.3.1",
+        "4.1.2"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "aria-hidden-focus": {
+      "help": "ARIA hidden element must not be focusable or contain focusable elements",
+      "url": "https://dequeuniversity.com/rules/axe/aria-hidden-focus?application=axeAPI",
+      "criteria": [
+        "4.1.2"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "aria-input-field-name": {
+      "help": "ARIA input fields must have an accessible name",
+      "url": "https://dequeuniversity.com/rules/axe/aria-input-field-name?application=axeAPI",
+      "criteria": [
+        "4.1.2"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "aria-meter-name": {
+      "help": "ARIA meter nodes must have an accessible name",
+      "url": "https://dequeuniversity.com/rules/axe/aria-meter-name?application=axeAPI",
+      "criteria": [
+        "1.1.1"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "aria-progressbar-name": {
+      "help": "ARIA progressbar nodes must have an accessible name",
+      "url": "https://dequeuniversity.com/rules/axe/aria-progressbar-name?application=axeAPI",
+      "criteria": [
+        "1.1.1"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "aria-prohibited-attr": {
+      "help": "Elements must only use permitted ARIA attributes",
+      "url": "https://dequeuniversity.com/rules/axe/aria-prohibited-attr?application=axeAPI",
+      "criteria": [
+        "4.1.2"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "aria-required-attr": {
+      "help": "Required ARIA attributes must be provided",
+      "url": "https://dequeuniversity.com/rules/axe/aria-required-attr?application=axeAPI",
+      "criteria": [
+        "4.1.2"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "aria-required-children": {
+      "help": "Certain ARIA roles must contain particular children",
+      "url": "https://dequeuniversity.com/rules/axe/aria-required-children?application=axeAPI",
+      "criteria": [
+        "1.3.1"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "aria-required-parent": {
+      "help": "Certain ARIA roles must be contained by particular parents",
+      "url": "https://dequeuniversity.com/rules/axe/aria-required-parent?application=axeAPI",
+      "criteria": [
+        "1.3.1"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "aria-roledescription": {
+      "help": "aria-roledescription must be on elements with a semantic role",
+      "url": "https://dequeuniversity.com/rules/axe/aria-roledescription?application=axeAPI",
+      "criteria": [
+        "4.1.2"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": false
+    },
+    "aria-roles": {
+      "help": "ARIA roles used must conform to valid values",
+      "url": "https://dequeuniversity.com/rules/axe/aria-roles?application=axeAPI",
+      "criteria": [
+        "4.1.2"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "aria-tab-name": {
+      "help": "ARIA tab nodes must have an accessible name",
+      "url": "https://dequeuniversity.com/rules/axe/aria-tab-name?application=axeAPI",
+      "criteria": [
+        "4.1.2"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "aria-text": {
+      "help": "\"role=text\" should have no focusable descendants",
+      "url": "https://dequeuniversity.com/rules/axe/aria-text?application=axeAPI",
+      "criteria": [],
+      "bestPractice": true,
+      "enabledByDefault": true
+    },
+    "aria-toggle-field-name": {
+      "help": "ARIA toggle fields must have an accessible name",
+      "url": "https://dequeuniversity.com/rules/axe/aria-toggle-field-name?application=axeAPI",
+      "criteria": [
+        "4.1.2"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "aria-tooltip-name": {
+      "help": "ARIA tooltip nodes must have an accessible name",
+      "url": "https://dequeuniversity.com/rules/axe/aria-tooltip-name?application=axeAPI",
+      "criteria": [
+        "4.1.2"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "aria-treeitem-name": {
+      "help": "ARIA treeitem nodes should have an accessible name",
+      "url": "https://dequeuniversity.com/rules/axe/aria-treeitem-name?application=axeAPI",
+      "criteria": [],
+      "bestPractice": true,
+      "enabledByDefault": true
+    },
+    "aria-valid-attr": {
+      "help": "ARIA attributes must conform to valid names",
+      "url": "https://dequeuniversity.com/rules/axe/aria-valid-attr?application=axeAPI",
+      "criteria": [
+        "4.1.2"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "aria-valid-attr-value": {
+      "help": "ARIA attributes must conform to valid values",
+      "url": "https://dequeuniversity.com/rules/axe/aria-valid-attr-value?application=axeAPI",
+      "criteria": [
+        "4.1.2"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "audio-caption": {
+      "help": "<audio> elements must have a captions track",
+      "url": "https://dequeuniversity.com/rules/axe/audio-caption?application=axeAPI",
+      "criteria": [
+        "1.2.1"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": false
+    },
+    "autocomplete-valid": {
+      "help": "autocomplete attribute must be used correctly",
+      "url": "https://dequeuniversity.com/rules/axe/autocomplete-valid?application=axeAPI",
+      "criteria": [
+        "1.3.5"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "avoid-inline-spacing": {
+      "help": "Inline text spacing must be adjustable with custom stylesheets",
+      "url": "https://dequeuniversity.com/rules/axe/avoid-inline-spacing?application=axeAPI",
+      "criteria": [
+        "1.4.12"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "blink": {
+      "help": "<blink> elements are deprecated and must not be used",
+      "url": "https://dequeuniversity.com/rules/axe/blink?application=axeAPI",
+      "criteria": [
+        "2.2.2"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "button-name": {
+      "help": "Buttons must have discernible text",
+      "url": "https://dequeuniversity.com/rules/axe/button-name?application=axeAPI",
+      "criteria": [
+        "4.1.2"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "bypass": {
+      "help": "Page must have means to bypass repeated blocks",
+      "url": "https://dequeuniversity.com/rules/axe/bypass?application=axeAPI",
+      "criteria": [
+        "2.4.1"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "color-contrast": {
+      "help": "Elements must meet minimum color contrast ratio thresholds",
+      "url": "https://dequeuniversity.com/rules/axe/color-contrast?application=axeAPI",
+      "criteria": [
+        "1.4.3"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "color-contrast-enhanced": {
+      "help": "Elements must meet enhanced color contrast ratio thresholds",
+      "url": "https://dequeuniversity.com/rules/axe/color-contrast-enhanced?application=axeAPI",
+      "criteria": [
+        "1.4.6"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": false
+    },
+    "css-orientation-lock": {
+      "help": "CSS Media queries must not lock display orientation",
+      "url": "https://dequeuniversity.com/rules/axe/css-orientation-lock?application=axeAPI",
+      "criteria": [
+        "1.3.4"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": false
+    },
+    "definition-list": {
+      "help": "<dl> elements must only directly contain properly-ordered <dt> and <dd> groups, <script>, <template> or <div> elements",
+      "url": "https://dequeuniversity.com/rules/axe/definition-list?application=axeAPI",
+      "criteria": [
+        "1.3.1"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "dlitem": {
+      "help": "<dt> and <dd> elements must be contained by a <dl>",
+      "url": "https://dequeuniversity.com/rules/axe/dlitem?application=axeAPI",
+      "criteria": [
+        "1.3.1"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "document-title": {
+      "help": "Documents must have <title> element to aid in navigation",
+      "url": "https://dequeuniversity.com/rules/axe/document-title?application=axeAPI",
+      "criteria": [
+        "2.4.2"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "duplicate-id": {
+      "help": "id attribute value must be unique",
+      "url": "https://dequeuniversity.com/rules/axe/duplicate-id?application=axeAPI",
+      "criteria": [
+        "4.1.1"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": false
+    },
+    "duplicate-id-active": {
+      "help": "IDs of active elements must be unique",
+      "url": "https://dequeuniversity.com/rules/axe/duplicate-id-active?application=axeAPI",
+      "criteria": [
+        "4.1.1"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": false
+    },
+    "duplicate-id-aria": {
+      "help": "IDs used in ARIA and labels must be unique",
+      "url": "https://dequeuniversity.com/rules/axe/duplicate-id-aria?application=axeAPI",
+      "criteria": [
+        "4.1.2"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "empty-heading": {
+      "help": "Headings should not be empty",
+      "url": "https://dequeuniversity.com/rules/axe/empty-heading?application=axeAPI",
+      "criteria": [],
+      "bestPractice": true,
+      "enabledByDefault": true
+    },
+    "empty-table-header": {
+      "help": "Table header text should not be empty",
+      "url": "https://dequeuniversity.com/rules/axe/empty-table-header?application=axeAPI",
+      "criteria": [],
+      "bestPractice": true,
+      "enabledByDefault": true
+    },
+    "focus-order-semantics": {
+      "help": "Elements in the focus order should have an appropriate role",
+      "url": "https://dequeuniversity.com/rules/axe/focus-order-semantics?application=axeAPI",
+      "criteria": [],
+      "bestPractice": true,
+      "enabledByDefault": false
+    },
+    "form-field-multiple-labels": {
+      "help": "Form field must not have multiple label elements",
+      "url": "https://dequeuniversity.com/rules/axe/form-field-multiple-labels?application=axeAPI",
+      "criteria": [
+        "3.3.2"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "frame-focusable-content": {
+      "help": "Frames with focusable content must not have tabindex=-1",
+      "url": "https://dequeuniversity.com/rules/axe/frame-focusable-content?application=axeAPI",
+      "criteria": [
+        "2.1.1"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "frame-tested": {
+      "help": "Frames should be tested with axe-core",
+      "url": "https://dequeuniversity.com/rules/axe/frame-tested?application=axeAPI",
+      "criteria": [],
+      "bestPractice": true,
+      "enabledByDefault": true
+    },
+    "frame-title": {
+      "help": "Frames must have an accessible name",
+      "url": "https://dequeuniversity.com/rules/axe/frame-title?application=axeAPI",
+      "criteria": [
+        "4.1.2"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "frame-title-unique": {
+      "help": "Frames must have a unique title attribute",
+      "url": "https://dequeuniversity.com/rules/axe/frame-title-unique?application=axeAPI",
+      "criteria": [
+        "4.1.2"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "heading-order": {
+      "help": "Heading levels should only increase by one",
+      "url": "https://dequeuniversity.com/rules/axe/heading-order?application=axeAPI",
+      "criteria": [],
+      "bestPractice": true,
+      "enabledByDefault": true
+    },
+    "hidden-content": {
+      "help": "Hidden content on the page should be analyzed",
+      "url": "https://dequeuniversity.com/rules/axe/hidden-content?application=axeAPI",
+      "criteria": [],
+      "bestPractice": true,
+      "enabledByDefault": false
+    },
+    "html-has-lang": {
+      "help": "<html> element must have a lang attribute",
+      "url": "https://dequeuniversity.com/rules/axe/html-has-lang?application=axeAPI",
+      "criteria": [
+        "3.1.1"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "html-lang-valid": {
+      "help": "<html> element must have a valid value for the lang attribute",
+      "url": "https://dequeuniversity.com/rules/axe/html-lang-valid?application=axeAPI",
+      "criteria": [
+        "3.1.1"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "html-xml-lang-mismatch": {
+      "help": "HTML elements with lang and xml:lang must have the same base language",
+      "url": "https://dequeuniversity.com/rules/axe/html-xml-lang-mismatch?application=axeAPI",
+      "criteria": [
+        "3.1.1"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "identical-links-same-purpose": {
+      "help": "Links with the same name must have a similar purpose",
+      "url": "https://dequeuniversity.com/rules/axe/identical-links-same-purpose?application=axeAPI",
+      "criteria": [
+        "2.4.9"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": false
+    },
+    "image-alt": {
+      "help": "Images must have alternative text",
+      "url": "https://dequeuniversity.com/rules/axe/image-alt?application=axeAPI",
+      "criteria": [
+        "1.1.1"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "image-redundant-alt": {
+      "help": "Alternative text of images should not be repeated as text",
+      "url": "https://dequeuniversity.com/rules/axe/image-redundant-alt?application=axeAPI",
+      "criteria": [],
+      "bestPractice": true,
+      "enabledByDefault": true
+    },
+    "input-button-name": {
+      "help": "Input buttons must have discernible text",
+      "url": "https://dequeuniversity.com/rules/axe/input-button-name?application=axeAPI",
+      "criteria": [
+        "4.1.2"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "input-image-alt": {
+      "help": "Image buttons must have alternative text",
+      "url": "https://dequeuniversity.com/rules/axe/input-image-alt?application=axeAPI",
+      "criteria": [
+        "1.1.1",
+        "4.1.2"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "label": {
+      "help": "Form elements must have labels",
+      "url": "https://dequeuniversity.com/rules/axe/label?application=axeAPI",
+      "criteria": [
+        "4.1.2"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "label-content-name-mismatch": {
+      "help": "Elements must have their visible text as part of their accessible name",
+      "url": "https://dequeuniversity.com/rules/axe/label-content-name-mismatch?application=axeAPI",
+      "criteria": [
+        "2.5.3"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "label-title-only": {
+      "help": "Form elements should have a visible label",
+      "url": "https://dequeuniversity.com/rules/axe/label-title-only?application=axeAPI",
+      "criteria": [],
+      "bestPractice": true,
+      "enabledByDefault": true
+    },
+    "landmark-banner-is-top-level": {
+      "help": "Banner landmark should not be contained in another landmark",
+      "url": "https://dequeuniversity.com/rules/axe/landmark-banner-is-top-level?application=axeAPI",
+      "criteria": [],
+      "bestPractice": true,
+      "enabledByDefault": true
+    },
+    "landmark-complementary-is-top-level": {
+      "help": "Aside should not be contained in another landmark",
+      "url": "https://dequeuniversity.com/rules/axe/landmark-complementary-is-top-level?application=axeAPI",
+      "criteria": [],
+      "bestPractice": true,
+      "enabledByDefault": false
+    },
+    "landmark-contentinfo-is-top-level": {
+      "help": "Contentinfo landmark should not be contained in another landmark",
+      "url": "https://dequeuniversity.com/rules/axe/landmark-contentinfo-is-top-level?application=axeAPI",
+      "criteria": [],
+      "bestPractice": true,
+      "enabledByDefault": true
+    },
+    "landmark-main-is-top-level": {
+      "help": "Main landmark should not be contained in another landmark",
+      "url": "https://dequeuniversity.com/rules/axe/landmark-main-is-top-level?application=axeAPI",
+      "criteria": [],
+      "bestPractice": true,
+      "enabledByDefault": true
+    },
+    "landmark-no-duplicate-banner": {
+      "help": "Document should not have more than one banner landmark",
+      "url": "https://dequeuniversity.com/rules/axe/landmark-no-duplicate-banner?application=axeAPI",
+      "criteria": [],
+      "bestPractice": true,
+      "enabledByDefault": true
+    },
+    "landmark-no-duplicate-contentinfo": {
+      "help": "Document should not have more than one contentinfo landmark",
+      "url": "https://dequeuniversity.com/rules/axe/landmark-no-duplicate-contentinfo?application=axeAPI",
+      "criteria": [],
+      "bestPractice": true,
+      "enabledByDefault": true
+    },
+    "landmark-no-duplicate-main": {
+      "help": "Document should not have more than one main landmark",
+      "url": "https://dequeuniversity.com/rules/axe/landmark-no-duplicate-main?application=axeAPI",
+      "criteria": [],
+      "bestPractice": true,
+      "enabledByDefault": true
+    },
+    "landmark-one-main": {
+      "help": "Document should have one main landmark",
+      "url": "https://dequeuniversity.com/rules/axe/landmark-one-main?application=axeAPI",
+      "criteria": [],
+      "bestPractice": true,
+      "enabledByDefault": true
+    },
+    "landmark-unique": {
+      "help": "Landmarks should have a unique role or role/label/title (i.e. accessible name) combination",
+      "url": "https://dequeuniversity.com/rules/axe/landmark-unique?application=axeAPI",
+      "criteria": [],
+      "bestPractice": true,
+      "enabledByDefault": true
+    },
+    "link-in-text-block": {
+      "help": "Links must be distinguishable without relying on color",
+      "url": "https://dequeuniversity.com/rules/axe/link-in-text-block?application=axeAPI",
+      "criteria": [
+        "1.4.1"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "link-name": {
+      "help": "Links must have discernible text",
+      "url": "https://dequeuniversity.com/rules/axe/link-name?application=axeAPI",
+      "criteria": [
+        "2.4.4",
+        "4.1.2"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "list": {
+      "help": "<ul> and <ol> must only directly contain <li>, <script> or <template> elements",
+      "url": "https://dequeuniversity.com/rules/axe/list?application=axeAPI",
+      "criteria": [
+        "1.3.1"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "listitem": {
+      "help": "<li> elements must be contained in a <ul> or <ol>",
+      "url": "https://dequeuniversity.com/rules/axe/listitem?application=axeAPI",
+      "criteria": [
+        "1.3.1"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "marquee": {
+      "help": "<marquee> elements are deprecated and must not be used",
+      "url": "https://dequeuniversity.com/rules/axe/marquee?application=axeAPI",
+      "criteria": [
+        "2.2.2"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "meta-refresh": {
+      "help": "Delayed refresh under 20 hours must not be used",
+      "url": "https://dequeuniversity.com/rules/axe/meta-refresh?application=axeAPI",
+      "criteria": [
+        "2.2.1"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "meta-refresh-no-exceptions": {
+      "help": "Delayed refresh must not be used",
+      "url": "https://dequeuniversity.com/rules/axe/meta-refresh-no-exceptions?application=axeAPI",
+      "criteria": [
+        "2.2.4",
+        "3.2.5"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": false
+    },
+    "meta-viewport": {
+      "help": "Zooming and scaling must not be disabled",
+      "url": "https://dequeuniversity.com/rules/axe/meta-viewport?application=axeAPI",
+      "criteria": [
+        "1.4.4"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "meta-viewport-large": {
+      "help": "Users should be able to zoom and scale the text up to 500%",
+      "url": "https://dequeuniversity.com/rules/axe/meta-viewport-large?application=axeAPI",
+      "criteria": [],
+      "bestPractice": true,
+      "enabledByDefault": true
+    },
+    "nested-interactive": {
+      "help": "Interactive controls must not be nested",
+      "url": "https://dequeuniversity.com/rules/axe/nested-interactive?application=axeAPI",
+      "criteria": [
+        "4.1.2"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "no-autoplay-audio": {
+      "help": "<video> or <audio> elements must not play automatically",
+      "url": "https://dequeuniversity.com/rules/axe/no-autoplay-audio?application=axeAPI",
+      "criteria": [
+        "1.4.2"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "object-alt": {
+      "help": "<object> elements must have alternative text",
+      "url": "https://dequeuniversity.com/rules/axe/object-alt?application=axeAPI",
+      "criteria": [
+        "1.1.1"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "p-as-heading": {
+      "help": "Styled <p> elements must not be used as headings",
+      "url": "https://dequeuniversity.com/rules/axe/p-as-heading?application=axeAPI",
+      "criteria": [
+        "1.3.1"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": false
+    },
+    "page-has-heading-one": {
+      "help": "Page should contain a level-one heading",
+      "url": "https://dequeuniversity.com/rules/axe/page-has-heading-one?application=axeAPI",
+      "criteria": [],
+      "bestPractice": true,
+      "enabledByDefault": true
+    },
+    "presentation-role-conflict": {
+      "help": "Elements marked as presentational should be consistently ignored",
+      "url": "https://dequeuniversity.com/rules/axe/presentation-role-conflict?application=axeAPI",
+      "criteria": [],
+      "bestPractice": true,
+      "enabledByDefault": true
+    },
+    "region": {
+      "help": "All page content should be contained by landmarks",
+      "url": "https://dequeuniversity.com/rules/axe/region?application=axeAPI",
+      "criteria": [],
+      "bestPractice": true,
+      "enabledByDefault": true
+    },
+    "role-img-alt": {
+      "help": "[role=\"img\"] and [role=\"image\"] elements must have alternative text",
+      "url": "https://dequeuniversity.com/rules/axe/role-img-alt?application=axeAPI",
+      "criteria": [
+        "1.1.1"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "scope-attr-valid": {
+      "help": "scope attribute should be used correctly",
+      "url": "https://dequeuniversity.com/rules/axe/scope-attr-valid?application=axeAPI",
+      "criteria": [],
+      "bestPractice": true,
+      "enabledByDefault": true
+    },
+    "scrollable-region-focusable": {
+      "help": "Scrollable region must have keyboard access",
+      "url": "https://dequeuniversity.com/rules/axe/scrollable-region-focusable?application=axeAPI",
+      "criteria": [
+        "2.1.1",
+        "2.1.3"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "select-name": {
+      "help": "Select element must have an accessible name",
+      "url": "https://dequeuniversity.com/rules/axe/select-name?application=axeAPI",
+      "criteria": [
+        "4.1.2"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "server-side-image-map": {
+      "help": "Server-side image maps must not be used",
+      "url": "https://dequeuniversity.com/rules/axe/server-side-image-map?application=axeAPI",
+      "criteria": [
+        "2.1.1"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "skip-link": {
+      "help": "The skip-link target should exist and be focusable",
+      "url": "https://dequeuniversity.com/rules/axe/skip-link?application=axeAPI",
+      "criteria": [],
+      "bestPractice": true,
+      "enabledByDefault": true
+    },
+    "summary-name": {
+      "help": "Summary elements must have discernible text",
+      "url": "https://dequeuniversity.com/rules/axe/summary-name?application=axeAPI",
+      "criteria": [
+        "4.1.2"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "svg-img-alt": {
+      "help": "<svg> elements with an img or image role must have alternative text",
+      "url": "https://dequeuniversity.com/rules/axe/svg-img-alt?application=axeAPI",
+      "criteria": [
+        "1.1.1"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "tabindex": {
+      "help": "Elements should not have tabindex greater than zero",
+      "url": "https://dequeuniversity.com/rules/axe/tabindex?application=axeAPI",
+      "criteria": [],
+      "bestPractice": true,
+      "enabledByDefault": true
+    },
+    "table-duplicate-name": {
+      "help": "Tables should not have the same summary and caption",
+      "url": "https://dequeuniversity.com/rules/axe/table-duplicate-name?application=axeAPI",
+      "criteria": [],
+      "bestPractice": true,
+      "enabledByDefault": true
+    },
+    "table-fake-caption": {
+      "help": "Data or header cells must not be used to give caption to a data table.",
+      "url": "https://dequeuniversity.com/rules/axe/table-fake-caption?application=axeAPI",
+      "criteria": [
+        "1.3.1"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": false
+    },
+    "target-size": {
+      "help": "All touch targets must be 24px large, or leave sufficient space",
+      "url": "https://dequeuniversity.com/rules/axe/target-size?application=axeAPI",
+      "criteria": [
+        "2.5.8"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": false
+    },
+    "td-has-header": {
+      "help": "Non-empty <td> elements in larger <table> must have an associated table header",
+      "url": "https://dequeuniversity.com/rules/axe/td-has-header?application=axeAPI",
+      "criteria": [
+        "1.3.1"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": false
+    },
+    "td-headers-attr": {
+      "help": "Table cell headers attributes must refer to other <th> elements in the same table",
+      "url": "https://dequeuniversity.com/rules/axe/td-headers-attr?application=axeAPI",
+      "criteria": [
+        "1.3.1"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "th-has-data-cells": {
+      "help": "Table headers in a data table must refer to data cells",
+      "url": "https://dequeuniversity.com/rules/axe/th-has-data-cells?application=axeAPI",
+      "criteria": [
+        "1.3.1"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "valid-lang": {
+      "help": "lang attribute must have a valid value",
+      "url": "https://dequeuniversity.com/rules/axe/valid-lang?application=axeAPI",
+      "criteria": [
+        "3.1.2"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    },
+    "video-caption": {
+      "help": "<video> elements must have captions",
+      "url": "https://dequeuniversity.com/rules/axe/video-caption?application=axeAPI",
+      "criteria": [
+        "1.2.2"
+      ],
+      "bestPractice": false,
+      "enabledByDefault": true
+    }
+  }
+}

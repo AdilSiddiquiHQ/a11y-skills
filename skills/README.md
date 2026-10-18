@@ -1,6 +1,6 @@
 # Skills
 
-30 skills. Each is a procedure with a named failure-mode list, and
+33 skills. Each is a procedure with a named failure-mode list, and
 each declares the WCAG 2.2 success criteria it addresses. Every citation is
 checked against the spec in CI, so a skill cannot cite a criterion that does not
 exist, or name one differently from the spec.
@@ -33,19 +33,22 @@ it is stale.
 | [`motion-and-animation`](./motion-and-animation/) | An animation or parallax effect makes someone dizzy, when a carousel auto-plays or an element flashes, when there is no way to turn off motion, or when a shake-to-undo or tilt interaction has no button alternative. |
 | [`page-title-and-language`](./page-title-and-language/) | The browser tab or screen reader announces the wrong page, when every page shares one title, when a single-page app never updates the title, or when text is read aloud in the wrong language or accent. |
 | [`pagination-and-search`](./pagination-and-search/) | Building or reviewing pagination, a results list, or a search and filter UI, when page links are too small or unlabelled, or when users lose track of where they are in a set of results. |
+| [`pointer-and-gestures`](./pointer-and-gestures/) | A feature only works by dragging, swiping or pinching, when a control fires on pointer-down so it cannot be cancelled, when touch targets are too small, or when the app breaks when a second input device appears. |
+| [`predictable-context`](./predictable-context/) | Focusing or changing a field moves the user somewhere unexpectedly, when a select navigates on change, when the same control is labelled differently on different pages, or when a page reloads or closes without being asked. |
 | [`progress-and-loading`](./progress-and-loading/) | Building or reviewing a spinner, progress bar, upload, loading state, or session timeout, when a screen reader never hears that loading finished, or when a progress indicator has no name or too little contrast. |
 | [`screen-reader-test-plan`](./screen-reader-test-plan/) | Asked to test a page or flow with a screen reader, when writing an accessibility test script, or when reading order and focus order cannot be judged from the markup alone. |
+| [`semantic-html`](./semantic-html/) | A screen reader announces no list, no list length, or no definition list; when a list, definition list, or heading is built from div, p or span elements; or when bold paragraphs are used where headings belong. |
 | [`skip-links`](./skip-links/) | A keyboard user must tab through the whole navigation on every page, when a "skip to content" link is unreachable or does nothing, or when focus lands in the wrong place after using one. |
 | [`svg-and-icons`](./svg-and-icons/) | Adding an SVG, an icon font, or an icon-only button, when a screen reader announces an unlabelled graphic, or when an icon is invisible or conveyed only by colour against its background. |
 | [`tabs`](./tabs/) | A tab strip cannot be operated with the arrow keys, when every tab is its own Tab stop, or when a screen reader cannot say which tab is selected. |
 | [`tooltip-popover`](./tooltip-popover/) | A tooltip only appears on hover and not on keyboard focus, when it vanishes as the pointer moves onto it, or when Escape does not dismiss it. |
 | [`triage-automated-results`](./triage-automated-results/) | An automated accessibility scan reports issues to triage, when a Lighthouse or axe score is being treated as conformance, or when a tool finding needs a verdict, an owner, and a criterion. |
 | [`wcag22-new-criteria`](./wcag22-new-criteria/) | Reviewing against WCAG 2.2 specifically, when a target size or drag interaction is in scope, when help links must be consistent across pages, or when someone cites 4.1.1 Parsing and needs to know it was removed. |
-| [`zoom-reflow-text-spacing`](./zoom-reflow-text-spacing/) | Zooming or pinch-zoom breaks the layout, when text is clipped or overlaps at 320px or 400% zoom, when increasing text spacing cuts content off, or when the viewport meta disables zoom. |
+| [`zoom-reflow-text-spacing`](./zoom-reflow-text-spacing/) | Zooming or pinch-zoom breaks the layout, when text is clipped or overlaps at 320px or 400% zoom, when increasing text spacing cuts content off, when the viewport meta disables zoom, when the app only works in landscape, or when text is baked into an image. |
 
 ## By success criterion
 
-Which skill to read when a report names a criterion. 52 of the 86 criteria in WCAG 2.2 are covered.
+Which skill to read when a report names a criterion. 70 of the 86 criteria in WCAG 2.2 are covered.
 
 | Criterion | Skills |
 |---|---|
@@ -55,14 +58,18 @@ Which skill to read when a report names a criterion. 52 of the 86 criteria in WC
 | SC 1.2.3 Audio Description or Media Alternative (Prerecorded) | `media-captions` |
 | SC 1.2.4 Captions (Live) | `media-captions` |
 | SC 1.2.5 Audio Description (Prerecorded) | `media-captions` |
-| SC 1.3.1 Info and Relationships | `accessible-forms`, `accessible-name`, `accordion-disclosure`, `audit-component`, `charts-and-dataviz`, `data-table`, `email-html-accessibility`, `headings-and-landmarks`, `live-regions`, `page-title-and-language`, `screen-reader-test-plan`, `skip-links`, `tabs` |
+| SC 1.3.1 Info and Relationships | `accessible-forms`, `accessible-name`, `accordion-disclosure`, `audit-component`, `charts-and-dataviz`, `data-table`, `email-html-accessibility`, `headings-and-landmarks`, `live-regions`, `page-title-and-language`, `screen-reader-test-plan`, `semantic-html`, `skip-links`, `tabs` |
 | SC 1.3.2 Meaningful Sequence | `audit-component`, `data-table` |
+| SC 1.3.3 Sensory Characteristics | `forced-colors-and-dark-mode` |
+| SC 1.3.4 Orientation | `zoom-reflow-text-spacing` |
 | SC 1.3.5 Identify Input Purpose | `accessible-authentication`, `accessible-forms`, `combobox-autocomplete` |
+| SC 1.3.6 Identify Purpose | `accessible-name` |
 | SC 1.4.1 Use of Color | `audit-component`, `charts-and-dataviz`, `fix-color-contrast`, `forced-colors-and-dark-mode`, `svg-and-icons` |
 | SC 1.4.2 Audio Control | `media-captions` |
 | SC 1.4.3 Contrast (Minimum) | `audit-component`, `email-html-accessibility`, `fix-color-contrast`, `forced-colors-and-dark-mode`, `triage-automated-results` |
 | SC 1.4.4 Resize Text | `zoom-reflow-text-spacing` |
-| SC 1.4.6 Contrast (Enhanced) | `forced-colors-and-dark-mode` |
+| SC 1.4.5 Images of Text | `zoom-reflow-text-spacing` |
+| SC 1.4.6 Contrast (Enhanced) | `fix-color-contrast`, `forced-colors-and-dark-mode` |
 | SC 1.4.8 Visual Presentation | `zoom-reflow-text-spacing` |
 | SC 1.4.10 Reflow | `data-table`, `zoom-reflow-text-spacing` |
 | SC 1.4.11 Non-text Contrast | `charts-and-dataviz`, `fix-color-contrast`, `forced-colors-and-dark-mode`, `progress-and-loading`, `svg-and-icons`, `tooltip-popover`, `triage-automated-results` |
@@ -70,14 +77,19 @@ Which skill to read when a report names a criterion. 52 of the 86 criteria in WC
 | SC 1.4.13 Content on Hover or Focus | `keyboard-focus`, `menu-button`, `tooltip-popover` |
 | SC 2.1.1 Keyboard | `accordion-disclosure`, `audit-component`, `carousel`, `combobox-autocomplete`, `keyboard-focus`, `live-regions`, `menu-button`, `modal-dialog`, `tabs`, `tooltip-popover` |
 | SC 2.1.2 No Keyboard Trap | `keyboard-focus`, `menu-button`, `modal-dialog` |
+| SC 2.1.3 Keyboard (No Exception) | `keyboard-focus` |
+| SC 2.1.4 Character Key Shortcuts | `keyboard-focus` |
 | SC 2.2.1 Timing Adjustable | `progress-and-loading` |
 | SC 2.2.2 Pause, Stop, Hide | `carousel`, `motion-and-animation` |
+| SC 2.2.6 Timeouts | `accessible-authentication` |
 | SC 2.3.1 Three Flashes or Below Threshold | `motion-and-animation` |
+| SC 2.3.2 Three Flashes | `motion-and-animation` |
 | SC 2.3.3 Animation from Interactions | `carousel`, `motion-and-animation` |
 | SC 2.4.1 Bypass Blocks | `headings-and-landmarks`, `skip-links` |
 | SC 2.4.2 Page Titled | `page-title-and-language` |
 | SC 2.4.3 Focus Order | `audit-component`, `keyboard-focus`, `modal-dialog`, `screen-reader-test-plan`, `skip-links`, `tabs` |
 | SC 2.4.4 Link Purpose (In Context) | `accessible-name`, `audit-component`, `email-html-accessibility`, `pagination-and-search` |
+| SC 2.4.5 Multiple Ways | `pagination-and-search` |
 | SC 2.4.6 Headings and Labels | `accessible-forms`, `accordion-disclosure`, `audit-component`, `data-table`, `headings-and-landmarks` |
 | SC 2.4.7 Focus Visible | `audit-component`, `keyboard-focus`, `skip-links` |
 | SC 2.4.8 Location | `pagination-and-search` |
@@ -85,21 +97,30 @@ Which skill to read when a report names a criterion. 52 of the 86 criteria in WC
 | SC 2.4.11 Focus Not Obscured (Minimum) | `keyboard-focus`, `wcag22-new-criteria` |
 | SC 2.4.12 Focus Not Obscured (Enhanced) | `wcag22-new-criteria` |
 | SC 2.4.13 Focus Appearance | `wcag22-new-criteria` |
+| SC 2.5.1 Pointer Gestures | `pointer-and-gestures` |
+| SC 2.5.2 Pointer Cancellation | `pointer-and-gestures` |
 | SC 2.5.3 Label in Name | `accessible-name` |
 | SC 2.5.4 Motion Actuation | `motion-and-animation` |
+| SC 2.5.5 Target Size (Enhanced) | `pointer-and-gestures` |
+| SC 2.5.6 Concurrent Input Mechanisms | `pointer-and-gestures` |
 | SC 2.5.7 Dragging Movements | `wcag22-new-criteria` |
 | SC 2.5.8 Target Size (Minimum) | `pagination-and-search`, `wcag22-new-criteria` |
 | SC 3.1.1 Language of Page | `page-title-and-language` |
 | SC 3.1.2 Language of Parts | `page-title-and-language` |
+| SC 3.2.1 On Focus | `predictable-context` |
+| SC 3.2.2 On Input | `predictable-context` |
 | SC 3.2.3 Consistent Navigation | `pagination-and-search` |
+| SC 3.2.4 Consistent Identification | `predictable-context` |
+| SC 3.2.5 Change on Request | `predictable-context` |
 | SC 3.2.6 Consistent Help | `wcag22-new-criteria` |
 | SC 3.3.1 Error Identification | `accessible-authentication`, `accessible-forms` |
 | SC 3.3.2 Labels or Instructions | `accessible-forms`, `accessible-name`, `combobox-autocomplete` |
 | SC 3.3.3 Error Suggestion | `accessible-forms` |
+| SC 3.3.4 Error Prevention (Legal, Financial, Data) | `accessible-forms` |
 | SC 3.3.7 Redundant Entry | `accessible-forms`, `wcag22-new-criteria` |
 | SC 3.3.8 Accessible Authentication (Minimum) | `accessible-authentication`, `accessible-forms`, `wcag22-new-criteria` |
 | SC 3.3.9 Accessible Authentication (Enhanced) | `accessible-authentication`, `wcag22-new-criteria` |
-| SC 4.1.2 Name, Role, Value | `accessible-name`, `accordion-disclosure`, `audit-component`, `carousel`, `combobox-autocomplete`, `menu-button`, `modal-dialog`, `progress-and-loading`, `screen-reader-test-plan`, `svg-and-icons`, `tabs`, `tooltip-popover`, `triage-automated-results` |
+| SC 4.1.2 Name, Role, Value | `accessible-forms`, `accessible-name`, `accordion-disclosure`, `audit-component`, `carousel`, `combobox-autocomplete`, `menu-button`, `modal-dialog`, `progress-and-loading`, `screen-reader-test-plan`, `semantic-html`, `svg-and-icons`, `tabs`, `tooltip-popover`, `triage-automated-results` |
 | SC 4.1.3 Status Messages | `accessible-forms`, `live-regions`, `progress-and-loading`, `screen-reader-test-plan` |
 
 The remaining criteria are not covered because they cannot be meaningfully

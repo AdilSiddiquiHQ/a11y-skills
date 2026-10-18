@@ -26,8 +26,8 @@ const FRAMES = join(tmpdir(), 'a11y-skills-cli-demo');
 const BIN = join(ROOT, 'bin', 'a11y-skills.js');
 
 const SCENES = [
-  { args: ['search', 'toast announced twice'] },
-  { args: ['info', 'live-regions'] },
+  { args: ['search', 'drag'] },
+  { args: ['rules', 'color-contrast'] },
 ];
 
 const WIDTH = 720;

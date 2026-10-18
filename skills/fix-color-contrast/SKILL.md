@@ -5,7 +5,7 @@ description: Use when text or a UI control is hard to read against its backgroun
 
 # Fix colour contrast
 
-**Criteria:** SC 1.4.3 Contrast (Minimum), SC 1.4.11 Non-text Contrast, SC 1.4.1 Use of Color
+**Criteria:** SC 1.4.3 Contrast (Minimum), SC 1.4.6 Contrast (Enhanced), SC 1.4.11 Non-text Contrast, SC 1.4.1 Use of Color
 
 Make text and UI components meet the WCAG 2.2 contrast minimums **without
 replacing the brand colour** — adjust lightness, keep the hue.
@@ -72,6 +72,16 @@ Anchors worth memorising, on white:
 
 5. **Never fix contrast by removing the colour.** If the only way to pass is to
    make two states identical, the design needs a second cue — see below.
+
+6. **Decide once whether you are targeting AA or AAA.** SC 1.4.3 asks for 4.5:1
+   and is required for conformance. SC 1.4.6 asks for 7:1 and is not required by
+   any AA baseline — but a house rule of 7:1 for body text at design time costs
+   nothing and removes an entire class of complaint from older readers. The
+   mistake is to apply it inconsistently: a palette that advertises AAA and then
+   exempts the muted grey used for timestamps and captions is neither, and the
+   exemptions are always the text people actually struggle with. axe's
+   `color-contrast-enhanced` rule checks the 7:1 target and ships **disabled by
+   default**, so an AAA claim needs the rule enabled or it is unchecked.
 
 ## Verify
 

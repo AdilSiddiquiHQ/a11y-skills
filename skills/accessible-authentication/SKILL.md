@@ -5,7 +5,7 @@ description: Use when building or reviewing a login, sign-up, password reset, or
 
 # Accessible authentication
 
-**Criteria:** SC 3.3.8 Accessible Authentication (Minimum), SC 3.3.9 Accessible Authentication (Enhanced), SC 1.3.5 Identify Input Purpose, SC 3.3.1 Error Identification
+**Criteria:** SC 3.3.8 Accessible Authentication (Minimum), SC 3.3.9 Accessible Authentication (Enhanced), SC 1.3.5 Identify Input Purpose, SC 3.3.1 Error Identification, SC 2.2.6 Timeouts
 
 Authentication is a cognitive function test in disguise: it asks a user to
 remember a password, transcribe a code, or solve a puzzle. WCAG 2.2 accepts that
@@ -109,6 +109,22 @@ mechanism most people with cognitive disabilities rely on.
      <a href="/reset">reset your password</a>.
    </p>
    ```
+
+7. **Warn before a session times out, and let it be extended (SC 2.2.6, AAA).**
+   A timeout the user is not warned about loses work, and for someone typing slowly
+   with a switch or speech input it loses work *every time*. The criterion asks for
+   warning, and for the ability to continue the activity for at least 20 hours
+   without re-authenticating. Prefer to extend the session over warning at all.
+
+   ```js
+   // Warn with time to act, and make the extension a real button - not only a
+   // modal that steals focus, and never a silent redirect to the login page.
+   sessionWarning({ secondsLeft: 120, onExtend: () => refreshSession() });
+   ```
+
+   If you must time out — a bank, a shared terminal — preserve what the user typed
+   and offer it back after re-authentication, which is the same as SC 3.3.7 Redundant
+   Entry seen from the other side.
 
 ## Verify
 

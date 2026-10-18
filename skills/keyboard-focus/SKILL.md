@@ -5,7 +5,7 @@ description: Use when something cannot be operated without a mouse, when focus o
 
 # Keyboard and focus
 
-**Criteria:** SC 2.1.1 Keyboard, SC 2.1.2 No Keyboard Trap, SC 2.4.3 Focus Order, SC 2.4.7 Focus Visible, SC 2.4.11 Focus Not Obscured (Minimum), SC 1.4.13 Content on Hover or Focus
+**Criteria:** SC 2.1.1 Keyboard, SC 2.1.2 No Keyboard Trap, SC 2.1.3 Keyboard (No Exception), SC 2.1.4 Character Key Shortcuts, SC 2.4.3 Focus Order, SC 2.4.7 Focus Visible, SC 2.4.11 Focus Not Obscured (Minimum), SC 1.4.13 Content on Hover or Focus
 
 Make a component fully operable from the keyboard, keep focus order sane, make
 the focus indicator visible, and keep it from being hidden behind your own UI.
@@ -97,6 +97,49 @@ the focus indicator visible, and keep it from being hidden behind your own UI.
 
 6. **Only suppress Tab inside a modal dialog.** A trap in a menu, dropdown or
    tooltip fails SC 2.1.2: the user must always be able to move focus away.
+
+7. **Never bind a single character as a shortcut (SC 2.1.4).** A shortcut that uses
+   one letter, number or symbol without a modifier — `j`, `k`, `/` — fires while the
+   user is typing in a text field, and a speech-input user triggering "press k" by
+   saying a word containing it cannot avoid it. It is allowed only if one of these
+   is true, and the first is the one to implement:
+
+   | Way to pass | What it means |
+   |---|---|
+   | **Turn it off** | A documented mechanism, at least a user preference |
+   | **Remap it** | The user can bind another key, including a modified one |
+   | **Only on focus** | Active only while a specific component has focus |
+
+   ```js
+   // Fails SC 2.1.4 — fires while the user is typing "kale" in the search field
+   document.addEventListener('keydown', (e) => { if (e.key === 'k') openSearch(); });
+
+   // Passes — the shortcut is ignored wherever text is being entered
+   document.addEventListener('keydown', (e) => {
+     const typing = e.target.closest('input, textarea, select, [contenteditable]');
+     if (e.key === 'k' && !typing && !e.ctrlKey && !e.metaKey && !e.altKey) openSearch();
+   });
+   ```
+
+   Guarding against text fields is necessary and not sufficient: it does not help a
+   speech-input user, and it is not the mechanism the criterion asks for. Provide the
+   preference — most editors and inboxes already do, which is why `G` then `I` is
+   fine and a bare `I` is not.
+
+8. **Keyboard access has no exception at AAA (SC 2.1.3).** SC 2.1.1 allows an
+   "underlying function" route — a keyboard-operable alternative somewhere else on
+   the page. SC 2.1.3 removes that escape hatch: every individual control must be
+   operable, not just the feature it belongs to. In practice this is the difference
+   between "there is a keyboard-accessible button that opens the same dialog" and
+   "the dialog itself can be driven from the keyboard once open". Chip groups, custom
+   sliders, colour pickers and drag handles are where this shows up.
+
+   ```html
+   <!-- Passes SC 2.1.1 only: the slider is operable by mouse, and there is a
+        separate numeric input. At AAA the slider itself must respond to arrows. -->
+   <div class="slider" role="slider" aria-valuenow="40"></div>
+   <input type="number" aria-label="Opacity percentage" value="40">
+   ```
 
 ## Verify
 

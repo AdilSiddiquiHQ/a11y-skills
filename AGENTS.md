@@ -16,7 +16,10 @@ weaken a check to make a change pass.
 ```bash
 npm test          # content gate + README/claims pinning. No browser, fast.
 npm run fixtures  # axe-core in Chromium over every before/after pair
-npm run build-docs # regenerate skills/README.md, docs/COVERAGE.md, the badge
+npm run build-docs # regenerate skills/README.md, docs/COVERAGE.md, the badge,
+                   # and docs/RULE-MAP.md
+npm run axe-rules # refresh verify/axe-rules.json from the installed axe-core
+npm run rule-docs # regenerate docs/RULE-MAP.md and validate verify/rule-map.json
 npm run demo      # regenerate docs/demo.gif (needs ffmpeg)
 npm run demo:cli  # regenerate docs/cli.gif (needs ffmpeg)
 npm run check     # build-docs + test + fixtures
@@ -47,11 +50,42 @@ rather than assuming it passed.
 7. **Never claim an unmeasured number anywhere.** If a count appears in the
    README, the index, or the coverage report, it must come from the generator or
    from a test. `verify/verify-readme.js` will catch you.
-8. **`skills/README.md`, `docs/COVERAGE.md` and `docs/badge-coverage.svg` are
-   generated.** Edit the skill or the generator, then `npm run build-docs`. Never
-   hand-edit the output.
+8. **`skills/README.md`, `docs/COVERAGE.md`, `docs/badge-coverage.svg` and
+   `docs/RULE-MAP.md` are generated.** Edit the skill or the generator, then
+   `npm run build-docs`. Never hand-edit the output.
 9. **`after.html` in a fixture must be completely axe-clean**, best-practice rules
    included. If it is not, fix the fixture, not the assertion.
+10. **`verify/axe-rules.json` is generated from axe-core; `verify/rule-map.json` is
+    curated by hand.** Never edit the snapshot by hand — run `npm run axe-rules`.
+    The map is the one place a judgement call is recorded, and it is checked: every
+    rule id must exist in the snapshot, every skill must exist, and the skill must
+    declare at least one of the criteria axe tags the rule with. If you cannot map
+    a rule to a skill that satisfies check three, leave it out — a gap is reported
+    honestly in `docs/RULE-MAP.md` and costs nothing, while a wrong mapping fails CI
+    and misleads anyone who follows it.
+11. **A fixture that tests a rule axe ships disabled must enable it explicitly**,
+    with `axeOptions` in that fixture's `meta.json`. `target-size` and
+    `p-as-heading` are both off by default, so a fixture that names one of them
+    without enabling it passes while testing nothing.
+
+## Facts about axe-core that are easy to get wrong
+
+These were measured against the committed snapshot (`verify/axe-rules.json`) rather
+than assumed, and each one has bitten somebody:
+
+- **15 rules are disabled by default**, including `target-size` — the only
+  automated check for SC 2.5.8, one of the two criteria WCAG 2.2 itself added.
+  A green audit says nothing about target sizes. `p-as-heading` is also off.
+- **`duplicate-id` and `duplicate-id-active` are still tagged SC 4.1.1**, which
+  WCAG 2.2 removed, and are disabled. If a report cites 4.1.1, it is citing
+  something that no longer exists.
+- **The `label` rule accepts a non-empty `placeholder` as a label**, so a
+  placeholder-only field passes a full audit and still fails SC 3.3.2.
+- **`p-as-heading` has a length heuristic**: it only fires when the styled
+  paragraph is *shorter* than the paragraph that follows it (`failLength` 0.5), so
+  a bold two-word paragraph above a long one is invisible to it.
+- **`target-size` only applies to widgets that are not inside a text block**, so a
+  small link inside a sentence is never reported. A toolbar of icon controls is.
 
 ## When a fixture fails
 

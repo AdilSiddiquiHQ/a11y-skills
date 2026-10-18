@@ -12,18 +12,18 @@ into a single percentage would give a bigger number and a false one.
 | Measure | Value |
 |---|---|
 | Criteria in WCAG 2.2 | 86 |
-| Criteria **addressed by a skill** | **52** (60%) |
-| Criteria with an **executable fixture** | **8** |
-| Fixture cases | 11 across 8 skills |
-| Skills | 30 |
+| Criteria **addressed by a skill** | **70** (81%) |
+| Criteria with an **executable fixture** | **9** |
+| Fixture cases | 14 across 10 skills |
+| Skills | 33 |
 
 ### By conformance level
 
 | Level | In WCAG 2.2 | Addressed | Coverage |
 |---|---|---|---|
-| A | 31 | 25 | 81% |
-| AA | 24 | 19 | 79% |
-| AAA | 31 | 8 | 26% |
+| A | 31 | 31 | 100% |
+| AA | 24 | 24 | 100% |
+| AAA | 31 | 15 | 48% |
 
 Level A and AA are where conformance claims are made, so those are the columns
 that matter. AAA criteria are included because several of them are what
@@ -47,18 +47,18 @@ and gives a procedure for it. Only the fixture column is executed.
 | SC 1.2.7 | AAA | Extended Audio Description (Prerecorded) | — |
 | SC 1.2.8 | AAA | Media Alternative (Prerecorded) | — |
 | SC 1.2.9 | AAA | Audio-only (Live) | — |
-| SC 1.3.1 | A | Info and Relationships | `accessible-forms`, `accessible-name`, `accordion-disclosure`, `audit-component`, `charts-and-dataviz`, `data-table`, `email-html-accessibility`, `headings-and-landmarks`, `live-regions`, `page-title-and-language`, `screen-reader-test-plan`, `skip-links`, `tabs` |
+| SC 1.3.1 | A | Info and Relationships | `accessible-forms`, `accessible-name`, `accordion-disclosure`, `audit-component`, `charts-and-dataviz`, `data-table`, `email-html-accessibility`, `headings-and-landmarks`, `live-regions`, `page-title-and-language`, `screen-reader-test-plan`, `semantic-html`, `skip-links`, `tabs` |
 | SC 1.3.2 | A | Meaningful Sequence | `audit-component`, `data-table` |
-| SC 1.3.3 | A | Sensory Characteristics | — |
-| SC 1.3.4 | AA | Orientation | — |
+| SC 1.3.3 | A | Sensory Characteristics | `forced-colors-and-dark-mode` |
+| SC 1.3.4 | AA | Orientation | `zoom-reflow-text-spacing` |
 | SC 1.3.5 | AA | Identify Input Purpose | `accessible-authentication`, `accessible-forms`, `combobox-autocomplete` |
-| SC 1.3.6 | AAA | Identify Purpose | — |
+| SC 1.3.6 | AAA | Identify Purpose | `accessible-name` |
 | SC 1.4.1 | A | Use of Color | `audit-component`, `charts-and-dataviz`, `fix-color-contrast`, `forced-colors-and-dark-mode`, `svg-and-icons` |
 | SC 1.4.2 | A | Audio Control | `media-captions` |
 | SC 1.4.3 | AA | Contrast (Minimum) | `audit-component`, `email-html-accessibility`, `fix-color-contrast`, `forced-colors-and-dark-mode`, `triage-automated-results` |
 | SC 1.4.4 | AA | Resize Text | `zoom-reflow-text-spacing` |
-| SC 1.4.5 | AA | Images of Text | — |
-| SC 1.4.6 | AAA | Contrast (Enhanced) | `forced-colors-and-dark-mode` |
+| SC 1.4.5 | AA | Images of Text | `zoom-reflow-text-spacing` |
+| SC 1.4.6 | AAA | Contrast (Enhanced) | `fix-color-contrast`, `forced-colors-and-dark-mode` |
 | SC 1.4.7 | AAA | Low or No Background Audio | — |
 | SC 1.4.8 | AAA | Visual Presentation | `zoom-reflow-text-spacing` |
 | SC 1.4.9 | AAA | Images of Text (No Exception) | — |
@@ -68,22 +68,22 @@ and gives a procedure for it. Only the fixture column is executed.
 | SC 1.4.13 | AA | Content on Hover or Focus | `keyboard-focus`, `menu-button`, `tooltip-popover` |
 | SC 2.1.1 | A | Keyboard | `accordion-disclosure`, `audit-component`, `carousel`, `combobox-autocomplete`, `keyboard-focus`, `live-regions`, `menu-button`, `modal-dialog`, `tabs`, `tooltip-popover` |
 | SC 2.1.2 | A | No Keyboard Trap | `keyboard-focus`, `menu-button`, `modal-dialog` |
-| SC 2.1.3 | AAA | Keyboard (No Exception) | — |
-| SC 2.1.4 | A | Character Key Shortcuts | — |
+| SC 2.1.3 | AAA | Keyboard (No Exception) | `keyboard-focus` |
+| SC 2.1.4 | A | Character Key Shortcuts | `keyboard-focus` |
 | SC 2.2.1 | A | Timing Adjustable | `progress-and-loading` |
 | SC 2.2.2 | A | Pause, Stop, Hide | `carousel`, `motion-and-animation` |
 | SC 2.2.3 | AAA | No Timing | — |
 | SC 2.2.4 | AAA | Interruptions | — |
 | SC 2.2.5 | AAA | Re-authenticating | — |
-| SC 2.2.6 | AAA | Timeouts | — |
+| SC 2.2.6 | AAA | Timeouts | `accessible-authentication` |
 | SC 2.3.1 | A | Three Flashes or Below Threshold | `motion-and-animation` |
-| SC 2.3.2 | AAA | Three Flashes | — |
+| SC 2.3.2 | AAA | Three Flashes | `motion-and-animation` |
 | SC 2.3.3 | AAA | Animation from Interactions | `carousel`, `motion-and-animation` |
 | SC 2.4.1 | A | Bypass Blocks | `headings-and-landmarks`, `skip-links` |
 | SC 2.4.2 | A | Page Titled | `page-title-and-language` |
 | SC 2.4.3 | A | Focus Order | `audit-component`, `keyboard-focus`, `modal-dialog`, `screen-reader-test-plan`, `skip-links`, `tabs` |
 | SC 2.4.4 | A | Link Purpose (In Context) | `accessible-name`, `audit-component`, `email-html-accessibility`, `pagination-and-search` |
-| SC 2.4.5 | AA | Multiple Ways | — |
+| SC 2.4.5 | AA | Multiple Ways | `pagination-and-search` |
 | SC 2.4.6 | AA | Headings and Labels | `accessible-forms`, `accordion-disclosure`, `audit-component`, `data-table`, `headings-and-landmarks` |
 | SC 2.4.7 | AA | Focus Visible | `audit-component`, `keyboard-focus`, `skip-links` |
 | SC 2.4.8 | AAA | Location | `pagination-and-search` |
@@ -92,12 +92,12 @@ and gives a procedure for it. Only the fixture column is executed.
 | SC 2.4.11 | AA | Focus Not Obscured (Minimum) | `keyboard-focus`, `wcag22-new-criteria` |
 | SC 2.4.12 | AAA | Focus Not Obscured (Enhanced) | `wcag22-new-criteria` |
 | SC 2.4.13 | AAA | Focus Appearance | `wcag22-new-criteria` |
-| SC 2.5.1 | A | Pointer Gestures | — |
-| SC 2.5.2 | A | Pointer Cancellation | — |
+| SC 2.5.1 | A | Pointer Gestures | `pointer-and-gestures` |
+| SC 2.5.2 | A | Pointer Cancellation | `pointer-and-gestures` |
 | SC 2.5.3 | A | Label in Name | `accessible-name` |
 | SC 2.5.4 | A | Motion Actuation | `motion-and-animation` |
-| SC 2.5.5 | AAA | Target Size (Enhanced) | — |
-| SC 2.5.6 | AAA | Concurrent Input Mechanisms | — |
+| SC 2.5.5 | AAA | Target Size (Enhanced) | `pointer-and-gestures` |
+| SC 2.5.6 | AAA | Concurrent Input Mechanisms | `pointer-and-gestures` |
 | SC 2.5.7 | AA | Dragging Movements | `wcag22-new-criteria` |
 | SC 2.5.8 | AA | Target Size (Minimum) | `pagination-and-search`, `wcag22-new-criteria` |
 | SC 3.1.1 | A | Language of Page | `page-title-and-language` |
@@ -106,27 +106,27 @@ and gives a procedure for it. Only the fixture column is executed.
 | SC 3.1.4 | AAA | Abbreviations | — |
 | SC 3.1.5 | AAA | Reading Level | — |
 | SC 3.1.6 | AAA | Pronunciation | — |
-| SC 3.2.1 | A | On Focus | — |
-| SC 3.2.2 | A | On Input | — |
+| SC 3.2.1 | A | On Focus | `predictable-context` |
+| SC 3.2.2 | A | On Input | `predictable-context` |
 | SC 3.2.3 | AA | Consistent Navigation | `pagination-and-search` |
-| SC 3.2.4 | AA | Consistent Identification | — |
-| SC 3.2.5 | AAA | Change on Request | — |
+| SC 3.2.4 | AA | Consistent Identification | `predictable-context` |
+| SC 3.2.5 | AAA | Change on Request | `predictable-context` |
 | SC 3.2.6 | A | Consistent Help | `wcag22-new-criteria` |
 | SC 3.3.1 | A | Error Identification | `accessible-authentication`, `accessible-forms` |
 | SC 3.3.2 | A | Labels or Instructions | `accessible-forms`, `accessible-name`, `combobox-autocomplete` |
 | SC 3.3.3 | AA | Error Suggestion | `accessible-forms` |
-| SC 3.3.4 | AA | Error Prevention (Legal, Financial, Data) | — |
+| SC 3.3.4 | AA | Error Prevention (Legal, Financial, Data) | `accessible-forms` |
 | SC 3.3.5 | AAA | Help | — |
 | SC 3.3.6 | AAA | Error Prevention (All) | — |
 | SC 3.3.7 | A | Redundant Entry | `accessible-forms`, `wcag22-new-criteria` |
 | SC 3.3.8 | AA | Accessible Authentication (Minimum) | `accessible-authentication`, `accessible-forms`, `wcag22-new-criteria` |
 | SC 3.3.9 | AAA | Accessible Authentication (Enhanced) | `accessible-authentication`, `wcag22-new-criteria` |
-| SC 4.1.2 | A | Name, Role, Value | `accessible-name`, `accordion-disclosure`, `audit-component`, `carousel`, `combobox-autocomplete`, `menu-button`, `modal-dialog`, `progress-and-loading`, `screen-reader-test-plan`, `svg-and-icons`, `tabs`, `tooltip-popover`, `triage-automated-results` |
+| SC 4.1.2 | A | Name, Role, Value | `accessible-forms`, `accessible-name`, `accordion-disclosure`, `audit-component`, `carousel`, `combobox-autocomplete`, `menu-button`, `modal-dialog`, `progress-and-loading`, `screen-reader-test-plan`, `semantic-html`, `svg-and-icons`, `tabs`, `tooltip-popover`, `triage-automated-results` |
 | SC 4.1.3 | AA | Status Messages | `accessible-forms`, `live-regions`, `progress-and-loading`, `screen-reader-test-plan` |
 
 ## Not covered, and why
 
-34 criteria have no skill. That is a deliberate state for the first group and a backlog for the second.
+16 criteria have no skill. That is a deliberate state for the first group and a backlog for the second.
 
 **Correctly absent — no design procedure can satisfy these.** Each is decided somewhere other than the code, so a "skill" would be a list of things to ask a different team for:
 
@@ -149,24 +149,7 @@ and gives a procedure for it. Only the fixture column is executed.
 
 **Backlog — procedural, and a skill should exist:**
 
-- SC 1.3.3 Sensory Characteristics (A)
-- SC 1.3.4 Orientation (AA)
-- SC 1.3.6 Identify Purpose (AAA)
-- SC 1.4.5 Images of Text (AA)
-- SC 2.1.3 Keyboard (No Exception) (AAA)
-- SC 2.1.4 Character Key Shortcuts (A)
-- SC 2.2.6 Timeouts (AAA)
-- SC 2.3.2 Three Flashes (AAA)
-- SC 2.4.5 Multiple Ways (AA)
-- SC 2.5.1 Pointer Gestures (A)
-- SC 2.5.2 Pointer Cancellation (A)
-- SC 2.5.5 Target Size (Enhanced) (AAA)
-- SC 2.5.6 Concurrent Input Mechanisms (AAA)
-- SC 3.2.1 On Focus (A)
-- SC 3.2.2 On Input (A)
-- SC 3.2.4 Consistent Identification (AA)
-- SC 3.2.5 Change on Request (AAA)
-- SC 3.3.4 Error Prevention (Legal, Financial, Data) (AA)
+- None right now.
 
 ## Fixtures
 
@@ -183,7 +166,9 @@ is what stops a skill from fixing one thing and quietly breaking another.
 | `headings-and-landmarks` | 2 |
 | `modal-dialog` | 1 |
 | `page-title-and-language` | 1 |
+| `semantic-html` | 2 |
 | `svg-and-icons` | 1 |
+| `wcag22-new-criteria` | 1 |
 | `zoom-reflow-text-spacing` | 1 |
 
 ### What fixtures cannot prove
@@ -206,4 +191,4 @@ is.
 
 ---
 
-*Generated from 30 skills: 52 of 86 criteria addressed, 8 with executable fixtures, 11 fixture cases.*
+*Generated from 33 skills: 70 of 86 criteria addressed, 9 with executable fixtures, 14 fixture cases.*

@@ -18,6 +18,11 @@ Concretely, the things worth attacking are:
    let a skill write outside it.
 3. **The verifier.** A verifier that reports success when it should fail is worse
    than no verifier, because the badges become a claim.
+4. **`audit`.** It is the one command that renders a document you point it at, and
+   the only one that can touch the network — `audit https://…` fetches that URL
+   into a real browser. It is the only place this package executes anything at
+   all. It never executes anything it finds *inside a skill*, and a file target is
+   read from disk exactly like `install` reads it.
 
 ## How it is mitigated
 
@@ -31,6 +36,12 @@ Concretely, the things worth attacking are:
 - **The installer never executes anything it finds.** It reads directory names and
   copies bytes. There is no plugin hook, no post-install script, and no network
   call in `bin/`.
+- **`audit` is opt-in, explicit, and does not install anything.** It requires
+  `axe-core` and a browser to already be present; it prints the install command
+  rather than fetching them. It launches Chromium through Playwright's default
+  sandbox settings, and the only external input it acts on is the target you name
+  and the browser binary at `--browser` / `CHROMIUM_PATH` — which is a path you
+  supply, in the same spirit as `$EDITOR` and `$BROWSER`.
 - **The verifier is itself tested by failing.** `verify/verify-readme.js` is
   pinned against real tool output, and the fixture harness refuses an `after.html`
   that is not clean rather than reporting a pass.
@@ -51,6 +62,8 @@ interesting part.
   work, however they are encoded.
 - Installer path traversal, symlink escape, or writing outside `--dest`.
 - A verifier or fixture that passes a case it should fail.
+- A rule-map entry that sends a finding to a skill that would make the page worse.
+- `audit` acting on anything other than the target named on the command line.
 - Anything in the published npm package that executes on install.
 
 ## Out of scope

@@ -19,6 +19,7 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { coverageStats } from '../scripts/generate-coverage.js';
+import { ruleMapStats } from '../scripts/generate-rule-docs.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, '..');
@@ -90,6 +91,15 @@ const claims = [
   [`${pct(coveredAt('AA'), atLevel('AA').length)}% of Level AA`, 'Level AA coverage'],
   [`| Criteria **with an executable fixture** (the fix is run) | ${s.fixtureIds.length} |`, 'fixture coverage row'],
 ];
+
+// The rule map is the other loud claim in the README: "99 of 105 axe rules map to
+// the skill that fixes them". It is derived from the axe snapshot and the curated
+// map, so it can be pinned the same way the coverage numbers are.
+const rs = ruleMapStats();
+claims.push([
+  `${rs.mapped.length} of ${Object.keys(rs.axe.rules).length} axe rules`,
+  'rule-map coverage',
+]);
 
 for (const [needle, what] of claims) {
   // Compared against whitespace-normalised text so that a claim spanning a line

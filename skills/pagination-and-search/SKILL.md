@@ -5,7 +5,7 @@ description: Use when building or reviewing pagination, a results list, or a sea
 
 # Pagination and search
 
-**Criteria:** SC 2.4.4 Link Purpose (In Context), SC 2.4.8 Location, SC 3.2.3 Consistent Navigation, SC 2.5.8 Target Size (Minimum)
+**Criteria:** SC 2.4.4 Link Purpose (In Context), SC 2.4.5 Multiple Ways, SC 2.4.8 Location, SC 3.2.3 Consistent Navigation, SC 2.5.8 Target Size (Minimum)
 
 Pagination and search are where a user answers two questions continuously: *what
 will this link do*, and *where am I*. Both are answerable in the markup, and both
@@ -124,6 +124,34 @@ access, middle-click, and the browser's own "where am I" affordances at once.
    control, or trigger on the input's own blur/commit in a way the user expects.
    This is also what keeps the results count live region from firing on every
    keystroke.
+
+8. **Offer more than one way to reach the content (SC 2.4.5 Multiple Ways, AA).**
+   A search box, plus at least one of: a sitemap, a table of contents, a navigation
+   menu, or a list of links to every page. Two independent routes, not two links to
+   the same route — "Home" and the logo do not count as two ways. The criterion does
+   not apply to a page that is the result of a process, or to a step in a flow, so a
+   checkout page with no sitemap is fine; a content page that is only reachable by
+   guessing its URL is not.
+
+   ```html
+   <!-- The usual passing shape: search in the header, navigation beside it -->
+   <header>
+     <nav aria-label="Primary">…</nav>
+     <form role="search" action="/search">
+       <label for="site-search">Search this site</label>
+       <input type="search" id="site-search" name="q">
+     </form>
+   </header>
+   <main>
+     <nav aria-label="Breadcrumb">…</nav>
+     …
+   </main>
+   ```
+
+   The failure to look for is a single-page app whose only navigation is a search
+   box, or a content site where the footer sitemap was deleted during a redesign.
+   It is invisible in a scan and invisible in a visual review, because from the
+   inside the site is obviously navigable.
 
 ## Verify
 

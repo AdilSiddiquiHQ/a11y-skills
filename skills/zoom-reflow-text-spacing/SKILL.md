@@ -1,17 +1,18 @@
 ---
 name: zoom-reflow-text-spacing
-description: Use when zooming or pinch-zoom breaks the layout, when text is clipped or overlaps at 320px or 400% zoom, when increasing text spacing cuts content off, or when the viewport meta disables zoom.
+description: Use when zooming or pinch-zoom breaks the layout, when text is clipped or overlaps at 320px or 400% zoom, when increasing text spacing cuts content off, when the viewport meta disables zoom, when the app only works in landscape, or when text is baked into an image.
 ---
 
 # Zoom, reflow and text spacing
 
-**Criteria:** SC 1.4.4 Resize Text, SC 1.4.10 Reflow, SC 1.4.12 Text Spacing, SC 1.4.8 Visual Presentation
+**Criteria:** SC 1.4.4 Resize Text, SC 1.4.10 Reflow, SC 1.4.12 Text Spacing, SC 1.4.5 Images of Text, SC 1.3.4 Orientation, SC 1.4.8 Visual Presentation
 
-These four criteria are all the same complaint from a different user: "I made the
-text bigger and your layout broke." The mistake that matters most is treating
-overflow as a cosmetic problem and fixing it with `overflow: hidden`, which hides
-the content instead of reflowing it — a double failure, because SC 1.4.10 is about
-not losing information, and clipping is the most complete way to lose it.
+These criteria are all the same complaint from a different user: "I made the
+screen work for me and your layout broke." The mistake that matters most is
+treating overflow as a cosmetic problem and fixing it with `overflow: hidden`,
+which hides the content instead of reflowing it — a double failure, because
+SC 1.4.10 is about not losing information, and clipping is the most complete way
+to lose it.
 
 ## When to use
 
@@ -19,6 +20,8 @@ not losing information, and clipping is the most complete way to lose it.
 - The viewport meta tag contains `user-scalable=no` or `maximum-scale=1`.
 - A card, badge, or button clips its label when the user increases text spacing.
 - Fixed heights and `white-space: nowrap` appear on text containers.
+- The site works on a phone only in landscape, or shows "rotate your device".
+- Headings, buttons or prices are exported as PNGs from a design tool.
 - You are asked to add a "large text" or "comfortable reading" mode.
 
 ## Procedure
@@ -120,6 +123,46 @@ not losing information, and clipping is the most complete way to lose it.
    }
    ```
 
+6. **Do not lock the page to one orientation (SC 1.3.4).** Content must work in
+   both portrait and landscape unless a specific orientation is *essential* — a
+   piano keyboard, a bank cheque scanner, a VR scene. Narrowing the column when the
+   screen is short is layout, and fine; refusing to render at all is not.
+
+   ```css
+   /* Fails SC 1.3.4 — the whole app is unavailable to a phone held upright */
+   @media (orientation: landscape) { .app { display: block } }
+   .app { display: none }
+
+   /* Passes — the layout responds to the available width and height */
+   @media (orientation: landscape) and (max-height: 30rem) { .toolbar { position: static } }
+   ```
+
+   axe's `css-orientation-lock` rule looks for exactly this pattern: a media query
+   on `orientation` that hides or reveals whole regions. It ships **disabled by
+   default**, so a green audit says nothing about orientation. The mobile failure is
+   common enough — "rotate your device", shown with an arrow — that it is worth
+   grepping for `orientation` as a code review step.
+
+7. **Use text, not a picture of text (SC 1.4.5).** An image of text cannot be
+   resized, re-spaced, re-coloured, translated or read by a screen reader, so every
+   criterion on this page fails for it at once. It is the one failure that no amount
+   of good CSS can reach.
+
+   ```html
+   <!-- Fails SC 1.4.5 — the headline is a PNG from the design tool -->
+   <img src="headline.png" alt="Save 30% this week">
+
+   <!-- Passes — real text that scales with the reader's settings -->
+   <h2 class="headline">Save 30% this week</h2>
+   ```
+
+   The exceptions are narrow and worth knowing exactly: logotypes — the wordmark
+   itself, not the marketing headline next to it — and situations where the specific
+   presentation is essential to the information, such as a font specimen or a
+   screenshot of an interface being discussed. SC 1.4.9 removes even the exception
+   path at AAA. In practice: SVG with real `<text>` is text; SVG with outlined paths
+   is an image of text; a CSS background image of a headline is an image of text.
+
 ## Verify
 
 Reflow is a viewport property, so resize the viewport; setting a width on the
@@ -169,6 +212,14 @@ off-screen controls, so this step needs your eyes.
   that SC 1.4.10 forbids.
 - **`width: 100vw`.** `100vw` includes the vertical scrollbar, so on any page tall
   enough to scroll it overflows horizontally by the scrollbar width. Use `100%`.
+- **"Rotate your device" screens.** A full-page `orientation` media query that
+  hides the app in portrait. It is a deliberate SC 1.3.4 failure, usually added to
+  avoid fixing one landscape-only widget, and axe will not report it unless
+  `css-orientation-lock` is enabled.
+- **Text exported as an image.** A hero headline as a PNG or an outlined SVG path,
+  usually because the webfont was inconvenient. Nothing in CSS can rescue it: it
+  does not scale with the reader's font size, cannot take text spacing, and is
+  invisible to search, translation and screen readers alike.
 - **Testing reflow by narrowing the document, not the viewport.** `body { width:
   320px }` does not change media queries or viewport units, so it hides every real
   failure.

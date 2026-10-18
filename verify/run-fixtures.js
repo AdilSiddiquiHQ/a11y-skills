@@ -45,11 +45,16 @@ async function main() {
       const expected = c.meta.expectRules || [];
       if (expected.length === 0) problems.push('meta.json names no expectRules');
 
+      // Some rules axe ships disabled. A fixture that names one has to enable it
+      // in meta.json, or the "before" would never trip it and the case would pass
+      // by testing nothing.
+      const axeOptions = c.meta.axeOptions || {};
+
       let beforeIds = [];
       let afterViolations = [];
 
       if (before !== null) {
-        beforeIds = (await scanHtml(browser, before)).map((v) => v.id);
+        beforeIds = (await scanHtml(browser, before, axeOptions)).map((v) => v.id);
         for (const rule of expected) {
           if (!beforeIds.includes(rule)) {
             problems.push(
@@ -61,7 +66,7 @@ async function main() {
       }
 
       if (after !== null) {
-        afterViolations = await scanHtml(browser, after);
+        afterViolations = await scanHtml(browser, after, axeOptions);
         for (const v of afterViolations) {
           problems.push(`after.html is not clean: ${v.id} (${v.impact}) — ${v.help}`);
         }
@@ -72,6 +77,9 @@ async function main() {
         case: c.name,
         criterion: c.meta.criterion || '',
         expected,
+        enabledByFixture: Object.keys(axeOptions.rules ?? {}).filter(
+          (r) => axeOptions.rules[r]?.enabled === true
+        ),
         beforeIds,
         afterClean: afterViolations.length === 0,
         ok: problems.length === 0,

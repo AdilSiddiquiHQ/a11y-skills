@@ -5,7 +5,7 @@ description: Use when an animation or parallax effect makes someone dizzy, when 
 
 # Motion and animation
 
-**Criteria:** SC 2.3.3 Animation from Interactions, SC 2.2.2 Pause, Stop, Hide, SC 2.3.1 Three Flashes or Below Threshold, SC 2.5.4 Motion Actuation
+**Criteria:** SC 2.3.3 Animation from Interactions, SC 2.2.2 Pause, Stop, Hide, SC 2.3.1 Three Flashes or Below Threshold, SC 2.3.2 Three Flashes, SC 2.5.4 Motion Actuation
 
 Motion on a screen is not decoration to the person it makes ill. Vestibular
 disorders make large-area movement, parallax and scroll-jacking literally

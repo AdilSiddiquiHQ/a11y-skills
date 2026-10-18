@@ -1,0 +1,136 @@
+name: a11y-skills audit
+description: Run axe-core over your pages and get the WCAG 2.2 skill that fixes each finding, as a job summary and an exit code.
+author: AdilSiddiquiHQ
+
+branding:
+  icon: eye
+  color: purple
+
+inputs:
+  target:
+    description: >
+      What to audit: an HTML file, a directory of HTML files (searched
+      recursively for *.html), or an http(s) URL.
+    required: true
+  fail-on:
+    description: >
+      Lowest impact that fails the step: critical | serious | moderate | minor |
+      none. The default is serious, so best-practice notices do not fail a build.
+    required: false
+    default: serious
+  wcag-only:
+    description: Ignore best-practice rules and report WCAG failures only.
+    required: false
+    default: 'false'
+  summary:
+    description: Write a Markdown report to the job summary.
+    required: false
+    default: 'true'
+
+outputs:
+  findings:
+    description: Total number of findings across everything audited.
+    value: ${{ steps.audit.outputs.findings }}
+  without-skill:
+    description: >
+      Findings whose axe rule has no skill behind it yet. Non-zero here is not a
+      failure — it is the honest measure of what this library does not cover.
+    value: ${{ steps.audit.outputs.without_skill }}
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    # The action does not bundle a browser or axe-core: both are large, and a
+    # user pinning this action should be able to see and pin their own versions.
+    # --no-save keeps the audit out of the project's dependency tree.
+    - name: Install axe-core and Playwright
+      shell: bash
+      run: npm install --no-save --no-audit --no-fund axe-core playwright
+
+    - name: Install Chromium
+      shell: bash
+      run: npx playwright install --with-deps chromium
+
+    - name: Audit
+      id: audit
+      shell: bash
+      env:
+        TARGET: ${{ inputs.target }}
+        FAIL_ON: ${{ inputs.fail-on }}
+        WCAG_ONLY: ${{ inputs.wcag-only }}
+        SUMMARY: ${{ inputs.summary }}
+      run: |
+        set -uo pipefail
+
+        # Resolve the target into a list of URLs. A directory is walked for HTML
+        # because the usual case is auditing a build output folder.
+        targets=()
+        if [ -f "$TARGET" ]; then
+          targets+=("$TARGET")
+        elif [ -d "$TARGET" ]; then
+          while IFS= read -r file; do targets+=("$file"); done < <(find "$TARGET" -type f -name '*.html' | sort)
+        else
+          targets+=("$TARGET")   # an http(s) URL, or the CLI will report it
+        fi
+
+        if [ "${#targets[@]}" -eq 0 ]; then
+          echo "::error::no HTML files found under $TARGET"
+          exit 3
+        fi
+
+        extra=()
+        [ "$WCAG_ONLY" = "true" ] && extra+=(--wcag-only)
+
+        findings=0
+        without_skill=0
+        failed=0
+        report=""
+
+        for t in "${targets[@]}"; do
+          echo "::group::a11y-skills audit $t"
+          node "$GITHUB_ACTION_PATH/bin/a11y-skills.js" audit "$t" \
+            --no-color --fail-on "$FAIL_ON" "${extra[@]}" --json > /tmp/audit.json
+          code=$?
+          set -e
+          node "$GITHUB_ACTION_PATH/bin/a11y-skills.js" audit "$t" \
+            --no-color --fail-on "$FAIL_ON" "${extra[@]}" || true
+          set +e
+
+          # Count and report, then let the exit code decide the step outcome.
+          read -r f w < <(node -e "
+            const r = require('/tmp/audit.json');
+            console.log(r.summary.violations, r.summary.withoutSkill);
+          ")
+          findings=$((findings + f))
+          without_skill=$((without_skill + w))
+          [ "$code" -ne 0 ] && failed=1
+
+          if [ "$SUMMARY" = "true" ]; then
+            report+="$(node "$GITHUB_ACTION_PATH/bin/a11y-skills.js" audit "$t" --no-color --fail-on none "${extra[@]}" --md 2>/dev/null || true)"
+            report+=$'\n'
+          fi
+          echo "::endgroup::"
+        done
+
+        echo "findings=$findings" >> "$GITHUB_OUTPUT"
+        echo "without_skill=$without_skill" >> "$GITHUB_OUTPUT"
+
+        echo "audited ${#targets[@]} page(s): $findings findings, $without_skill with no skill yet"
+
+        if [ "$SUMMARY" = "true" ] && [ -n "$report" ]; then
+          {
+            echo "# a11y-skills audit"
+            echo
+            echo "axe-core findings joined to the WCAG 2.2 procedure that fixes each one."
+            echo "Automated checks find a minority of real problems: read each skill's"
+            echo "\`## Verify\` section before treating this as done."
+            echo
+            printf '%s' "$report"
+          } >> "$GITHUB_STEP_SUMMARY"
+        fi
+
+        exit "$failed"

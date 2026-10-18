@@ -82,6 +82,43 @@ jobs:
           fi
           echo "colour: NO_COLOR suppresses, FORCE_COLOR forces"
 
+      # The axe rule -> skill map is the part of this project that is not a
+      # document. It works offline, so it is tested in the job with no
+      # dependencies installed.
+      - name: The rule map is usable offline
+        run: |
+          set -euo pipefail
+          node bin/a11y-skills.js rules --json > /tmp/rules.json
+          node -e "
+            const r = require('/tmp/rules.json');
+            if (r.mapped < 90) { console.error('only', r.mapped, 'rules mapped'); process.exit(1); }
+            const cc = r.rules.find((x) => x.id === 'color-contrast');
+            if (cc.skill !== 'fix-color-contrast') { console.error('color-contrast mapped to', cc.skill); process.exit(1); }
+            console.log(r.mapped, 'of', r.count, 'axe rules mapped');
+          "
+          node bin/a11y-skills.js rules target-size --json > /tmp/rule.json
+          node -e "
+            const r = require('/tmp/rule.json');
+            if (r.skill !== 'wcag22-new-criteria') process.exit(1);
+            if (r.enabledByDefault !== false) { console.error('target-size should be off by default'); process.exit(1); }
+            console.log('target-size ->', r.skill, '(axe ships it disabled)');
+          "
+
+      # audit is the one command that needs a browser. This job has none, on
+      # purpose, so the failure path is what gets tested here: it must explain
+      # the exact install command and exit 3, never install anything itself.
+      - name: audit explains itself when its dependencies are absent
+        run: |
+          set -euo pipefail
+          set +e
+          node bin/a11y-skills.js audit README.md > /tmp/audit.txt 2>&1
+          code=$?
+          set -e
+          cat /tmp/audit.txt
+          test "$code" = "3" || { echo "::error::expected exit 3, got $code"; exit 1; }
+          grep -q "npm i -D" /tmp/audit.txt || { echo "::error::no install instruction"; exit 1; }
+          echo "audit exits 3 with an install instruction, and installs nothing"
+
   fixtures:
     name: Run executable fixtures
     runs-on: ubuntu-latest
@@ -104,6 +141,49 @@ jobs:
       # completely clean, best-practice rules included.
       - name: Assert every fixture
         run: npm run fixtures
+
+      # audit is only as good as its exit code. The failing document must fail,
+      # the fixed one must pass, and --wcag-only must drop best-practice rules —
+      # all three are asserted, because a scanner that always exits 0 is worse
+      # than no scanner.
+      - name: audit finds the fixture's failures and clears its fix
+        run: |
+          set -euo pipefail
+          set +e
+          node bin/a11y-skills.js audit verify/fixtures/accessible-forms/styled-signup/before.html > /tmp/before.txt
+          code=$?
+          set -e
+          cat /tmp/before.txt
+          test "$code" = "1" || { echo "::error::expected exit 1 on a failing document, got $code"; exit 1; }
+          grep -q "skills/accessible-forms/" /tmp/before.txt || { echo "::error::no skill named for the label finding"; exit 1; }
+          grep -q "skills/fix-color-contrast/" /tmp/before.txt || { echo "::error::no skill named for the contrast finding"; exit 1; }
+
+          node bin/a11y-skills.js audit verify/fixtures/accessible-forms/styled-signup/after.html
+          echo "after.html exits 0"
+
+      - name: audit --json and --md and --wcag-only
+        run: |
+          set -euo pipefail
+          node bin/a11y-skills.js audit verify/fixtures/headings-and-landmarks/content-outside-landmarks/before.html --json > /tmp/audit.json
+          node -e "
+            const r = require('/tmp/audit.json');
+            if (!r.violations.length) { console.error('expected findings'); process.exit(1); }
+            const unmapped = r.violations.filter((v) => !v.skill);
+            console.log(r.summary.violations, 'findings,', unmapped.length, 'without a skill');
+            if (r.axe !== require('./verify/axe-rules.json').version) {
+              console.error('report cites axe', r.axe, 'but the snapshot is', require('./verify/axe-rules.json').version);
+              process.exit(1);
+            }
+          "
+          node bin/a11y-skills.js audit verify/fixtures/headings-and-landmarks/content-outside-landmarks/before.html --md > /tmp/audit.md
+          grep -q "a11y-skills audit" /tmp/audit.md
+          node bin/a11y-skills.js audit verify/fixtures/headings-and-landmarks/content-outside-landmarks/before.html --wcag-only --json > /tmp/audit-wcag.json
+          node -e "
+            const r = require('/tmp/audit-wcag.json');
+            const bp = r.violations.filter((v) => v.bestPractice);
+            if (bp.length) { console.error('--wcag-only kept best-practice rules:', bp.map((v) => v.id)); process.exit(1); }
+            console.log('--wcag-only dropped the best-practice rules');
+          "
 
   security:
     name: Scan our own skills

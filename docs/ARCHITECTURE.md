@@ -7,6 +7,8 @@ repository trustworthy.
 skills/<name>/SKILL.md          the product: prose an agent follows
         │
         ├── verify/wcag-2.2.json        ground truth: the 86 criteria
+        ├── verify/axe-rules.json       generated: axe-core's rules and their criteria
+        ├── verify/rule-map.json        curated: axe rule → the skill that fixes it
         ├── verify/verify-skills.js     is the prose well-formed and correctly cited?
         ├── verify/verify-readme.js     do the README's numbers match reality?
         ├── verify/fixtures/            is the advice true, where truth is decidable?
@@ -14,8 +16,11 @@ skills/<name>/SKILL.md          the product: prose an agent follows
         │
         ├── scripts/generate-index.js    → skills/README.md
         ├── scripts/generate-coverage.js → docs/COVERAGE.md + the badge
+        ├── scripts/generate-axe-rules.js → verify/axe-rules.json
+        ├── scripts/generate-rule-docs.js → docs/RULE-MAP.md, and validates the map
         └── scripts/make-demo.mjs        → docs/demo.gif
         │
+        ├── lib/chromium.js              finding a browser (shared, dependency-free)
         └── bin/a11y-skills.js           the only thing users run
 ```
 
@@ -36,10 +41,10 @@ The constraints a skill must satisfy are in
   behavioural contract. `## Verify` must be falsifiable — a step that cannot fail
   is not a verification step.
 
-## Layer 2 — verification, in three strengths
+## Layer 2 — verification, in four strengths
 
 These check different things and are deliberately not merged, because a single
-"verified" badge over all three would be a lie about the weakest of them.
+"verified" badge over all four would be a lie about the weakest of them.
 
 **Citations.** `verify-skills.js` holds every skill against
 `verify/wcag-2.2.json`, a machine-readable copy of all 86 WCAG 2.2 criteria with
@@ -66,13 +71,23 @@ Two decisions in that harness are load-bearing:
 
 **Numbers.** `verify-readme.js` pins the README to real tool output: it runs the
 verifier and asserts that every per-skill line and the summary appear, and that
-the coverage figures in the README match the generated coverage data. A number in
-a README that is not generated is wrong within a month, and it is the first thing
-a visitor reads.
+the coverage figures and rule-map counts in the README match the generated data. A
+number in a README that is not generated is wrong within a month, and it is the
+first thing a visitor reads.
+
+**The mapping.** `verify/rule-map.json` is the one file in the repository that
+records a judgement rather than a fact: which skill a given axe rule should send
+you to. Deriving it mechanically does not work — every criterion maps to several
+skills, so `label` would offer thirteen suggestions — and an unchecked judgement is
+just an opinion with a schema. So each entry is checked against three things it
+cannot edit: the rule id must exist in the axe snapshot, the skill must exist, and
+the skill must declare at least one of the criteria axe tags the rule with.
+Writing this map caught four mappings that pointed at a skill whose own criteria
+line did not cover the rule.
 
 ## Layer 3 — generation
 
-Three generated artefacts, two of which the verifier regenerates and diffs, so
+Four generated artefacts, and the verifier regenerates and diffs three of them, so
 they cannot drift.
 
 - `skills/README.md` — the index, including a criterion-to-skill map derived from
@@ -81,9 +96,18 @@ they cannot drift.
 - `docs/COVERAGE.md` and `docs/badge-coverage.svg` — the coverage report. It
   counts three things separately (addressed, executed, correctly absent) because
   collapsing them yields a bigger number and a false one.
+- `docs/RULE-MAP.md` — the axe-rule reference, including the rules with no skill
+  behind them and why each one is absent.
 - `docs/demo.gif` — built by running axe-core over a fixture and outlining what it
   found, then crossfading to the fixed page. The script refuses to build if the
   "after" fixture has any violations, so the animation cannot become a lie.
+
+`verify/axe-rules.json` is also generated, but from an external dependency
+(axe-core) rather than from this repository, so it is refreshed deliberately with
+`npm run axe-rules` and committed. Pinning the snapshot is what lets the content
+gate stay offline: the rule ids and their criteria are needed to validate the map,
+and a rule list that changed under a `npm install` would make the validator's
+verdict depend on the day it ran.
 
 ## Layer 4 — the CLI
 
@@ -93,8 +117,21 @@ skill and makes no network calls, which matters because the alternative — a
 package that fetches or executes a skill's contents — turns a content library into
 a supply-chain surface.
 
-`--json` exists on `list`, `search`, `info` and `criteria` so that another agent
-can drive the library without parsing human-formatted output.
+`--json` exists on every subcommand so that another agent can drive the library
+without parsing human-formatted output.
+
+`audit` is the exception that proves the rule about dependencies. Running axe-core
+needs axe-core and a browser, so `audit` finds them at run time, and when they are
+absent it prints the exact install command and exits 3 — it does not install
+anything, and it does not fail with a module resolution error. The mapping it
+prints (`rules colour-contrast` → `fix-color-contrast`) needs neither package,
+because it reads the committed snapshot and the committed map, which is why the
+mapping is tested in the CI job with no `npm ci` at all.
+
+The browser search lives in `lib/chromium.js` so that the fixture harness and the
+CLI cannot disagree about what counts as a usable Chromium. It is deliberately
+dependency-free: `audit` has to be able to report "I found no browser" without
+loading a framework to work it out.
 
 ## Decisions worth knowing
 

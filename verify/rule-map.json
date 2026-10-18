@@ -1,0 +1,417 @@
+{
+  "$comment": [
+    "Which skill to read when an automated audit reports a given axe rule.",
+    "",
+    "Most rules map to more than one criterion, and every criterion maps to several",
+    "skills, so deriving this by joining the two tables produces thirteen suggestions",
+    "for one finding. This file is the missing judgement: one primary skill per rule.",
+    "",
+    "It is not taken on trust. verify/verify-skills.js checks that every rule id here",
+    "is a real axe rule (from the committed snapshot in verify/axe-rules.json), that",
+    "every named skill exists, and that the skill actually declares one of the",
+    "criteria the rule tests. A guess that does not line up fails CI.",
+    "",
+    "Rules axe ships disabled by default are marked, because a finding from one of",
+    "them means the auditor enabled it deliberately - not that axe checks it for you.",
+    "Rules with no entry are genuine gaps: docs/RULE-MAP.md lists them, the CLI",
+    "prints 'no skill yet', and they are the backlog."
+  ],
+  "rules": {
+    "area-alt": {
+      "skill": "accessible-name",
+      "why": "an image map's areas are links, so they need link text"
+    },
+    "aria-allowed-attr": {
+      "skill": "audit-component",
+      "why": "an attribute the role does not support: review the widget's ARIA"
+    },
+    "aria-braille-equivalent": {
+      "skill": "audit-component",
+      "why": "braille-only attributes must still carry a spoken name"
+    },
+    "aria-command-name": {
+      "skill": "accessible-name",
+      "why": "a role=button/menuitem/link has no accessible name"
+    },
+    "aria-conditional-attr": {
+      "skill": "audit-component",
+      "why": "an attribute is present in a state that forbids it"
+    },
+    "aria-deprecated-role": {
+      "skill": "audit-component",
+      "why": "the role was removed from ARIA; use the native element"
+    },
+    "aria-hidden-body": {
+      "skill": "audit-component",
+      "why": "aria-hidden on <body> hides the whole page from assistive tech"
+    },
+    "aria-hidden-focus": {
+      "skill": "audit-component",
+      "why": "something focusable is inside aria-hidden and stays reachable by Tab"
+    },
+    "aria-input-field-name": {
+      "skill": "accessible-name",
+      "why": "an ARIA textbox/combobox/slider has no accessible name"
+    },
+    "aria-meter-name": {
+      "skill": "charts-and-dataviz",
+      "why": "a meter needs a name that says what it measures"
+    },
+    "aria-progressbar-name": {
+      "skill": "accessible-name",
+      "why": "a progressbar needs an accessible name, not just a percentage"
+    },
+    "aria-prohibited-attr": {
+      "skill": "audit-component",
+      "why": "the role prohibits this attribute, usually aria-label on a generic role"
+    },
+    "aria-required-attr": {
+      "skill": "audit-component",
+      "why": "the role is incomplete without a required state attribute"
+    },
+    "aria-required-children": {
+      "skill": "semantic-html",
+      "why": "a composite role is missing the children its structure requires"
+    },
+    "aria-required-parent": {
+      "skill": "semantic-html",
+      "why": "a child role is used outside the parent that gives it meaning"
+    },
+    "aria-roledescription": {
+      "skill": "audit-component",
+      "why": "a custom role description needs a valid role and a visible label"
+    },
+    "aria-roles": {
+      "skill": "audit-component",
+      "why": "the role value is not a real ARIA role"
+    },
+    "aria-tab-name": {
+      "skill": "tabs",
+      "why": "a tab needs an accessible name"
+    },
+    "aria-toggle-field-name": {
+      "skill": "accessible-name",
+      "why": "an ARIA checkbox/switch/radio has no accessible name"
+    },
+    "aria-tooltip-name": {
+      "skill": "tooltip-popover",
+      "why": "a tooltip needs an accessible name"
+    },
+    "aria-valid-attr": {
+      "skill": "audit-component",
+      "why": "an aria-* attribute name does not exist"
+    },
+    "aria-valid-attr-value": {
+      "skill": "audit-component",
+      "why": "an ARIA attribute value is invalid or points at a missing id"
+    },
+    "audio-caption": {
+      "skill": "media-captions",
+      "why": "an audio element has no track with kind=captions"
+    },
+    "autocomplete-valid": {
+      "skill": "accessible-forms",
+      "why": "the autocomplete token is not one of the defined values"
+    },
+    "avoid-inline-spacing": {
+      "skill": "zoom-reflow-text-spacing",
+      "why": "!important inline spacing blocks text-spacing overrides"
+    },
+    "blink": {
+      "skill": "motion-and-animation",
+      "why": "a blinking element cannot be paused"
+    },
+    "button-name": {
+      "skill": "accessible-name",
+      "why": "a button has no accessible name, usually an icon-only button"
+    },
+    "bypass": {
+      "skill": "skip-links",
+      "why": "no skip link, heading or landmark to bypass repeated content"
+    },
+    "color-contrast": {
+      "skill": "fix-color-contrast",
+      "why": "text contrast is below 4.5:1, or 3:1 for large text"
+    },
+    "color-contrast-enhanced": {
+      "skill": "fix-color-contrast",
+      "why": "AAA contrast, 7:1 for body text - axe leaves this rule off by default"
+    },
+    "css-orientation-lock": {
+      "skill": "zoom-reflow-text-spacing",
+      "why": "content is locked to one orientation"
+    },
+    "definition-list": {
+      "skill": "semantic-html",
+      "why": "a dl contains elements that are not dt, dd or a valid wrapper"
+    },
+    "dlitem": {
+      "skill": "semantic-html",
+      "why": "a dt/dd sits outside a dl"
+    },
+    "document-title": {
+      "skill": "page-title-and-language",
+      "why": "the page has no title, or an empty one"
+    },
+    "duplicate-id-aria": {
+      "skill": "audit-component",
+      "why": "duplicate ids break the aria-labelledby/controls references to them"
+    },
+    "form-field-multiple-labels": {
+      "skill": "accessible-forms",
+      "why": "a field has more than one label element, so its name is ambiguous"
+    },
+    "frame-focusable-content": {
+      "skill": "keyboard-focus",
+      "why": "a frame's content is focusable but unreachable inside a scrollable region"
+    },
+    "frame-title": {
+      "skill": "accessible-name",
+      "why": "an iframe has no title attribute"
+    },
+    "frame-title-unique": {
+      "skill": "accessible-name",
+      "why": "two iframes share a title, so they cannot be told apart"
+    },
+    "html-has-lang": {
+      "skill": "page-title-and-language",
+      "why": "the html element has no lang attribute"
+    },
+    "html-lang-valid": {
+      "skill": "page-title-and-language",
+      "why": "the lang value is not a valid language subtag"
+    },
+    "html-xml-lang-mismatch": {
+      "skill": "page-title-and-language",
+      "why": "lang and xml:lang disagree"
+    },
+    "image-alt": {
+      "skill": "accessible-name",
+      "why": "an img has no alt, or no role to say it is decorative"
+    },
+    "input-button-name": {
+      "skill": "accessible-name",
+      "why": "an input type=button/submit has no value to serve as its name"
+    },
+    "input-image-alt": {
+      "skill": "accessible-name",
+      "why": "an input type=image has no alt"
+    },
+    "label": {
+      "skill": "accessible-forms",
+      "why": "a form control has no associated label"
+    },
+    "label-content-name-mismatch": {
+      "skill": "accessible-name",
+      "why": "the visible text is not part of the accessible name, breaking voice control"
+    },
+    "link-in-text-block": {
+      "skill": "fix-color-contrast",
+      "why": "an inline link is distinguished by colour alone"
+    },
+    "link-name": {
+      "skill": "accessible-name",
+      "why": "a link has no accessible name, or one that says nothing"
+    },
+    "list": {
+      "skill": "semantic-html",
+      "why": "a ul/ol contains elements that are not li"
+    },
+    "listitem": {
+      "skill": "semantic-html",
+      "why": "an li sits outside a ul/ol/menu"
+    },
+    "marquee": {
+      "skill": "motion-and-animation",
+      "why": "a marquee cannot be paused"
+    },
+    "meta-refresh": {
+      "skill": "progress-and-loading",
+      "why": "the page refreshes itself with no way to stop it"
+    },
+    "meta-viewport": {
+      "skill": "zoom-reflow-text-spacing",
+      "why": "user-scalable=no or a maximum-scale blocks pinch zoom"
+    },
+    "nested-interactive": {
+      "skill": "audit-component",
+      "why": "interactive elements are nested inside an interactive parent"
+    },
+    "no-autoplay-audio": {
+      "skill": "media-captions",
+      "why": "audio plays longer than 3 seconds with no way to stop it"
+    },
+    "object-alt": {
+      "skill": "accessible-name",
+      "why": "an object element has no text alternative"
+    },
+    "p-as-heading": {
+      "skill": "semantic-html",
+      "why": "a bold, enlarged paragraph is used where a heading belongs"
+    },
+    "role-img-alt": {
+      "skill": "accessible-name",
+      "why": "role=img has no accessible name"
+    },
+    "scrollable-region-focusable": {
+      "skill": "keyboard-focus",
+      "why": "a scrollable region is not reachable without a mouse"
+    },
+    "select-name": {
+      "skill": "accessible-forms",
+      "why": "a select has no accessible name"
+    },
+    "server-side-image-map": {
+      "skill": "keyboard-focus",
+      "why": "a server-side image map has no keyboard equivalent"
+    },
+    "summary-name": {
+      "skill": "accordion-disclosure",
+      "why": "a summary has no accessible name"
+    },
+    "svg-img-alt": {
+      "skill": "svg-and-icons",
+      "why": "an inline SVG in the image role has no accessible name"
+    },
+    "table-fake-caption": {
+      "skill": "data-table",
+      "why": "a table uses a styled cell instead of a caption element"
+    },
+    "target-size": {
+      "skill": "wcag22-new-criteria",
+      "why": "SC 2.5.8 target size - axe leaves this rule off by default"
+    },
+    "td-has-header": {
+      "skill": "data-table",
+      "why": "a data cell has no header to be associated with"
+    },
+    "td-headers-attr": {
+      "skill": "data-table",
+      "why": "the headers attribute points at cells that are not headers, or outside the table"
+    },
+    "th-has-data-cells": {
+      "skill": "data-table",
+      "why": "a header row or column describes no data cells"
+    },
+    "valid-lang": {
+      "skill": "page-title-and-language",
+      "why": "a lang attribute on an element is not a valid language subtag"
+    },
+    "video-caption": {
+      "skill": "media-captions",
+      "why": "a video element has no captions track"
+    },
+    "accesskeys": {
+      "skill": "keyboard-focus",
+      "why": "a duplicated accesskey collides with another shortcut"
+    },
+    "aria-allowed-role": {
+      "skill": "audit-component",
+      "why": "the element does not accept this role, or the role conflicts with it"
+    },
+    "aria-dialog-name": {
+      "skill": "modal-dialog",
+      "why": "a dialog has no accessible name"
+    },
+    "aria-text": {
+      "skill": "audit-component",
+      "why": "role=text has no focusable children, so it hides structure for nothing"
+    },
+    "aria-treeitem-name": {
+      "skill": "accessible-name",
+      "why": "a treeitem has no accessible name"
+    },
+    "empty-heading": {
+      "skill": "headings-and-landmarks",
+      "why": "a heading has no text, so heading navigation lands nowhere"
+    },
+    "empty-table-header": {
+      "skill": "data-table",
+      "why": "a header cell has no text"
+    },
+    "focus-order-semantics": {
+      "skill": "keyboard-focus",
+      "why": "a focusable element has a role that does not accept focus"
+    },
+    "heading-order": {
+      "skill": "headings-and-landmarks",
+      "why": "heading levels are out of order - a best practice, not a WCAG failure"
+    },
+    "image-redundant-alt": {
+      "skill": "accessible-name",
+      "why": "the alt repeats adjacent text, so screen readers hear it twice"
+    },
+    "label-title-only": {
+      "skill": "accessible-forms",
+      "why": "a field is labelled only by title or placeholder, and loses its name"
+    },
+    "landmark-banner-is-top-level": {
+      "skill": "headings-and-landmarks",
+      "why": "a banner landmark is nested and so not exposed"
+    },
+    "landmark-complementary-is-top-level": {
+      "skill": "headings-and-landmarks",
+      "why": "a complementary landmark is nested and so not exposed"
+    },
+    "landmark-contentinfo-is-top-level": {
+      "skill": "headings-and-landmarks",
+      "why": "a contentinfo landmark is nested and so not exposed"
+    },
+    "landmark-main-is-top-level": {
+      "skill": "headings-and-landmarks",
+      "why": "a main landmark is nested, making skip-to-main ambiguous"
+    },
+    "landmark-no-duplicate-banner": {
+      "skill": "headings-and-landmarks",
+      "why": "more than one banner landmark on the page"
+    },
+    "landmark-no-duplicate-contentinfo": {
+      "skill": "headings-and-landmarks",
+      "why": "more than one contentinfo landmark on the page"
+    },
+    "landmark-no-duplicate-main": {
+      "skill": "headings-and-landmarks",
+      "why": "more than one main landmark on the page"
+    },
+    "landmark-one-main": {
+      "skill": "headings-and-landmarks",
+      "why": "the page has no main landmark"
+    },
+    "landmark-unique": {
+      "skill": "headings-and-landmarks",
+      "why": "two landmarks of the same role have the same name"
+    },
+    "meta-viewport-large": {
+      "skill": "zoom-reflow-text-spacing",
+      "why": "maximum-scale limits zoom to less than 5x"
+    },
+    "page-has-heading-one": {
+      "skill": "headings-and-landmarks",
+      "why": "the page has no h1"
+    },
+    "presentation-role-conflict": {
+      "skill": "audit-component",
+      "why": "role=presentation is ignored because the element is focusable or global"
+    },
+    "region": {
+      "skill": "headings-and-landmarks",
+      "why": "content sits outside every landmark - a best practice, not a WCAG failure"
+    },
+    "scope-attr-valid": {
+      "skill": "data-table",
+      "why": "the scope attribute value is invalid or misapplied"
+    },
+    "skip-link": {
+      "skill": "skip-links",
+      "why": "a skip link target is missing, not focusable, or not in the DOM order"
+    },
+    "tabindex": {
+      "skill": "keyboard-focus",
+      "why": "a positive tabindex reorders the whole page's focus sequence"
+    },
+    "table-duplicate-name": {
+      "skill": "data-table",
+      "why": "the table's caption and summary say the same thing"
+    }
+  }
+}

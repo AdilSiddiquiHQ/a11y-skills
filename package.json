@@ -1,13 +1,14 @@
 {
   "name": "a11y-skills",
-  "version": "0.2.0",
-  "description": "30 WCAG 2.2 procedures for coding agents, with every criterion citation checked against the spec and the fixes proved by executable axe-core fixtures.",
+  "version": "0.3.0",
+  "description": "33 WCAG 2.2 procedures for coding agents, covering every Level A and AA criterion, with a curated axe-core rule to skill map and every fix proved by executable fixtures.",
   "type": "module",
   "bin": {
     "a11y-skills": "bin/a11y-skills.js"
   },
   "files": [
     "bin",
+    "lib",
     "skills",
     "verify",
     "docs",
@@ -25,13 +26,15 @@
     "browser": "playwright install chromium",
     "index": "node scripts/generate-index.js",
     "coverage": "node scripts/generate-coverage.js",
-    "build-docs": "node scripts/generate-index.js && node scripts/generate-coverage.js",
+    "build-docs": "node scripts/generate-index.js && node scripts/generate-coverage.js && node scripts/generate-rule-docs.js",
     "demo": "node scripts/make-demo.mjs",
     "security": "npx --yes github:AdilSiddiquiHQ/skillsleuth#v0.4.0 . --fail-on none",
     "test": "node verify/verify-skills.js && node verify/verify-readme.js",
     "test:all": "npm test && npm run fixtures",
     "check": "npm run build-docs && npm test && npm run fixtures",
-    "demo:cli": "node scripts/make-cli-demo.mjs"
+    "demo:cli": "node scripts/make-cli-demo.mjs",
+    "axe-rules": "node scripts/generate-axe-rules.js",
+    "rule-docs": "node scripts/generate-rule-docs.js"
   },
   "keywords": [
     "accessibility",

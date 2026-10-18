@@ -11,7 +11,8 @@ It is enforced by `verify/verify-skills.js`, so read it before writing one.
 ```bash
 npm test         # structure, citations, generated docs, README accuracy (no browser)
 npm run fixtures # run every before/after pair through axe-core in Chromium
-npm run check    # both, plus regenerating docs
+npm run rule-docs # regenerate the axe rule → skill reference, and validate the map
+npm run check    # all of the above, plus regenerating docs
 ```
 
 ## Improving a skill
@@ -75,8 +76,9 @@ Two rules about the metadata that are not obvious:
   is right; `SC 1.4.3 Minimum Contrast` fails the build. Renaming a criterion in
   your own words makes the citation uncheckable against the source.
 
-You do **not** edit [`skills/README.md`](skills/README.md) or
-[`docs/COVERAGE.md`](docs/COVERAGE.md) — both are generated. Run:
+You do **not** edit [`skills/README.md`](skills/README.md),
+[`docs/COVERAGE.md`](docs/COVERAGE.md) or
+[`docs/RULE-MAP.md`](docs/RULE-MAP.md) — all three are generated. Run:
 
 ```bash
 npm run build-docs
@@ -119,6 +121,51 @@ Watch for rules that pass for the wrong reason. axe-core's `label` rule accepts 
 non-empty `placeholder` as a label, so a placeholder-only field cannot be used to
 demonstrate a missing label. When a fixture behaves unexpectedly, find out why
 before changing the assertion — that is usually where the interesting finding is.
+
+**Rules axe ships disabled need enabling explicitly.** Some rules are off by
+default, so a fixture naming one of them would pass while testing nothing. Add
+`axeOptions` to `meta.json`, which is passed straight to `axe.run`:
+
+```json
+{
+  "expectRules": ["target-size"],
+  "axeOptions": { "rules": { "target-size": { "enabled": true } } }
+}
+```
+
+`verify/fixtures/wcag22-new-criteria/undersized-targets/` does this for
+SC 2.5.8, whose only automated check is one of the 15 disabled rules. Check
+`enabledByDefault` in [`verify/axe-rules.json`](verify/axe-rules.json) before
+concluding a rule "does not exist".
+
+## Adding a rule-map entry
+
+[`verify/rule-map.json`](verify/rule-map.json) says which skill to read when an
+audit reports a given axe rule. It is curated, because deriving it mechanically
+gives thirteen suggestions for one finding:
+
+```json
+{
+  "color-contrast": {
+    "skill": "fix-color-contrast",
+    "why": "text contrast is below 4.5:1, or 3:1 for large text"
+  }
+}
+```
+
+Three checks run in `npm test`, and the third is the one that bites:
+
+1. the rule id must exist in `verify/axe-rules.json`;
+2. the skill must exist;
+3. **the skill must declare at least one of the criteria axe tags the rule with**
+   on its `**Criteria:**` line.
+
+If a rule genuinely has no home here, leave it unmapped: it appears under "Rules
+with no skill yet" in [`docs/RULE-MAP.md`](docs/RULE-MAP.md), which costs nothing,
+whereas a mapping that fails check 3 both fails CI and misleads the person who
+follows it. If a rule belongs to a skill that *should* have covered its criterion
+already, add the criterion to that skill with a real procedure — that is how
+`accessible-forms` came to own both SC 4.1.2 and SC 3.3.4.
 
 ## Adding a criterion
 

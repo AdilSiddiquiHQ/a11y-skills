@@ -5,10 +5,12 @@ description: Use when adding or reviewing alt text, icon buttons, links, or form
 
 # Accessible names and alt text
 
-**Criteria:** SC 1.1.1 Non-text Content, SC 1.3.1 Info and Relationships, SC 2.4.4 Link Purpose (In Context), SC 2.5.3 Label in Name, SC 4.1.2 Name, Role, Value, SC 3.3.2 Labels or Instructions
+**Criteria:** SC 1.1.1 Non-text Content, SC 1.3.1 Info and Relationships, SC 1.3.6 Identify Purpose, SC 2.4.4 Link Purpose (In Context), SC 2.5.3 Label in Name, SC 4.1.2 Name, Role, Value, SC 3.3.2 Labels or Instructions
 
-Give every control, link, and image a name that a screen reader announces
-usefully and that matches what is visible on screen.
+Where a name is missing, a screen reader announces the role and nothing else —
+"button", "edit text", "image". Give every control, link and image a name that is
+announced usefully and that matches what is visible on screen; that is the whole
+skill.
 
 ## When to use
 
@@ -87,6 +89,25 @@ image were not there?** If yes, describe it. If no, empty.
 4. Delete redundant attributes. If a `<button>` already contains the word
    "Save", an `aria-label="Save"` adds a second thing to keep in sync for no
    benefit.
+5. Identify the purpose of components, icons and regions, not only their content
+   (SC 1.3.6, AAA). A name says what a thing is; purpose says what it is *for*, and
+   SC 1.3.6 expects the purpose of user-interface components, icons and regions to be
+   programmatically determinable. In practice: `aria-label="Search"` rather than a
+   magnifier glyph with no name; `<main>` rather than an unlabelled `<div>`; and the
+   same names used consistently across the product (see the `predictable-context`
+   skill). The common failure is an icon that is *decorative by accident* — the
+   designer knows it means "download", the markup says nothing, and the meaning lives
+   only in the visual.
+
+   ```html
+   <!-- Fails SC 1.3.6 — purpose is in the glyph only -->
+   <span class="icon icon-download"></span>
+
+   <!-- Passes — the purpose is in the markup, and the glyph is hidden from AT -->
+   <button type="button" aria-label="Download invoice">
+     <span class="icon icon-download" aria-hidden="true"></span>
+   </button>
+   ```
 
 ## Verify
 

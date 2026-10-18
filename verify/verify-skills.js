@@ -29,6 +29,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { renderIndex } from '../scripts/generate-index.js';
 import { renderCoverage, renderBadge } from '../scripts/generate-coverage.js';
+import { renderRuleMap, ruleMapProblems } from '../scripts/generate-rule-docs.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, '..');
@@ -222,7 +223,15 @@ function main() {
     notes.push(`ok  ${dir.padEnd(28)} ${String(declaredCount).padStart(2)} criteria, ${sections.length} sections`);
   }
 
-  // 7. generated files must be exactly current.
+  // 7. the axe rule -> skill map must agree with three other files.
+  //
+  //    This is the check that makes the mapping worth anything. Anyone can write
+  //    "color-contrast -> fix-color-contrast"; verifying that the rule exists in
+  //    the axe snapshot AND that the skill declares SC 1.4.3 turns a claim into a
+  //    derivable fact. See scripts/generate-rule-docs.js.
+  problems.push(...ruleMapProblems());
+
+  // 8. generated files must be exactly current.
   //
   //    Comparing whole files rather than checking "does the index mention each
   //    skill" is deliberate: the weaker check passes when a skill is renamed in
@@ -241,6 +250,13 @@ function main() {
     join(ROOT, 'docs', 'badge-coverage.svg'),
     renderBadge,
     'npm run coverage',
+    problems
+  );
+  checkGenerated(
+    'docs/RULE-MAP.md',
+    join(ROOT, 'docs', 'RULE-MAP.md'),
+    renderRuleMap,
+    'npm run rule-docs',
     problems
   );
 
