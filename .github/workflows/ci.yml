@@ -199,26 +199,31 @@ jobs:
           grep -q "not a directory" /tmp/dir.txt || { echo "::error::the refusal does not explain itself"; exit 1; }
 
       # The Action's whole body is scripts/ci-audit.sh. Shell that only runs
-      # through `uses:` is untested shell, so it runs here with the same env the
-      # Action provides: exit 1 on the failing directory, exit 0 on the fixed
-      # page, and a job summary containing the skill that fixes each finding.
+      # through `uses:` is untested shell, so it runs here with the same
+      # environment the Action provides: exit 1 on the failing directory, exit 0
+      # on the fixed page, and a job summary naming the skill that fixes each
+      # finding.
+      #
+      # GITHUB_OUTPUT and GITHUB_STEP_SUMMARY are passed as a command prefix
+      # rather than a step-level `env:` on purpose — the runner owns those
+      # variables and a workflow-level value for them does not reach the process,
+      # which is exactly how this step reported "no such file" while the script
+      # beneath it was working perfectly.
       - name: the Action's script audits a directory and writes a summary
-        env:
-          GITHUB_OUTPUT: /tmp/gh_out
-          GITHUB_STEP_SUMMARY: /tmp/gh_summary
         run: |
           set -euo pipefail
 
           set +e
           TARGET=verify/fixtures/accessible-forms/styled-signup FAIL_ON=serious SUMMARY=true \
+            GITHUB_OUTPUT=/tmp/gh_out GITHUB_STEP_SUMMARY=/tmp/gh_summary \
             bash scripts/ci-audit.sh > /tmp/action.txt 2>&1
           code=$?
           set -e
           cat /tmp/action.txt
           test "$code" = "1" || { echo "::error::the Action script should exit 1 on a failing directory, got $code"; exit 1; }
 
-          g=$(grep -c '^findings=' /tmp/gh_out)
-          test "$g" = "1" || { echo "::error::expected findings= in GITHUB_OUTPUT"; exit 1; }
+          grep -q '^findings=' /tmp/gh_out || { echo "::error::no findings output"; exit 1; }
+          grep -q '^without_skill=' /tmp/gh_out || { echo "::error::no without_skill output"; exit 1; }
           grep -qE '^findings=[1-9]' /tmp/gh_out || { echo "::error::findings should not be 0: $(cat /tmp/gh_out)"; exit 1; }
           grep -q "skills/accessible-forms/" /tmp/gh_summary || { echo "::error::the summary does not name the skill that fixes the finding"; exit 1; }
           echo "Action script: exit 1, $(cat /tmp/gh_out | tr '\n' ' ')"
@@ -226,6 +231,7 @@ jobs:
           # A clean page must pass, or the thing is a blocker rather than a check.
           rm -f /tmp/gh_out /tmp/gh_summary
           TARGET=verify/fixtures/accessible-forms/styled-signup/after.html FAIL_ON=serious SUMMARY=false \
+            GITHUB_OUTPUT=/tmp/gh_out GITHUB_STEP_SUMMARY=/tmp/gh_summary \
             bash scripts/ci-audit.sh > /tmp/action-clean.txt 2>&1
           grep -qE '^findings=0' /tmp/gh_out || { echo "::error::a clean page should report 0 findings: $(cat /tmp/gh_out)"; exit 1; }
           echo "Action script: clean page reports 0 findings"
