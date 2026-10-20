@@ -89,7 +89,7 @@ const claims = [
   [`executable%20fixtures-${s.fixtureCases}-orange`, 'fixture badge'],
   [`${pct(coveredAt('A'), atLevel('A').length)}% of Level A`, 'Level A coverage'],
   [`${pct(coveredAt('AA'), atLevel('AA').length)}% of Level AA`, 'Level AA coverage'],
-  [`| Criteria **with an executable fixture** (the fix is run) | ${s.fixtureIds.length} |`, 'fixture coverage row'],
+  [`| Criteria **asserted by an executable fixture** (the fix is run) | ${s.fixtureIds.length} |`, 'fixture coverage row'],
 ];
 
 // The rule map is the other loud claim in the README: "99 of 105 axe rules map to

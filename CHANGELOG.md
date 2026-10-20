@@ -4,6 +4,27 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.2] — 2026-10-20
+
+A measurement fix. One number in the README and the coverage report was counting a
+claim instead of a test.
+
+### Fixed
+
+- **"Criteria with an executable fixture" was read from a hand-written label, not
+  from what the fixtures assert.** Each fixture's `meta.json` records the criterion
+  the case is *about*, and the coverage generator counted that field. For both
+  `accessible-forms` cases the label says SC 3.3.2, but axe-core's `label` rule
+  carries only SC 4.1.2 — so the report counted a criterion that nothing executes.
+  The count now comes from each case's `expectRules`, looked up in
+  `verify/axe-rules.json`. It was 9; it is 8. A number the person being counted can
+  edit is not a measurement.
+- **Three fixture cases assert best-practice rules only** — `landmark-one-main`,
+  `region`, `heading-order` and `aria-dialog-name` carry no success criterion. They
+  still prove their fix works, because `after.html` must be completely clean, but
+  they cannot execute a criterion. `docs/COVERAGE.md` now reports them in their own
+  row rather than folding them into the fixture count.
+
 ## [0.3.1] — 2026-10-19
 
 A patch release with one behaviour fix that matters and one thing that was simply

@@ -296,8 +296,14 @@ number is how coverage gets overstated:
 | Measure | Value |
 |---|---|
 | Criteria **addressed by a skill** (a procedure exists) | 70 of 86 |
-| Criteria **with an executable fixture** (the fix is run) | 9 |
+| Criteria **asserted by an executable fixture** (the fix is run) | 8 |
 | Criteria **correctly absent** (no procedure can satisfy them) | 16 |
+
+The fixture row counts 8 rather than 14 on purpose. All 14 fixture cases run, but
+three of them assert best-practice rules that carry no success criterion — they prove
+a fix works without proving a criterion. The number is derived from the axe rules
+each case asserts, not from the `criterion` label in its metadata; counting the label
+overstated it by one until that was fixed.
 
 The last row is not a backlog — there is no backlog left. SC 1.2.6 Sign Language
 (Prerecorded), SC 2.2.3 No Timing and SC 3.1.5 Reading Level cannot be fixed by a

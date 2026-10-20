@@ -13,8 +13,9 @@ into a single percentage would give a bigger number and a false one.
 |---|---|
 | Criteria in WCAG 2.2 | 86 |
 | Criteria **addressed by a skill** | **70** (81%) |
-| Criteria with an **executable fixture** | **9** |
+| Criteria **asserted by an executable fixture** | **8** |
 | Fixture cases | 14 across 10 skills |
+| Fixture cases that assert no criterion (best-practice rules only) | 3 |
 | Skills | 33 |
 
 ### By conformance level
@@ -32,6 +33,19 @@ Size (Enhanced) especially.
 
 **"Addressed" does not mean "verified".** It means a skill names the criterion
 and gives a procedure for it. Only the fixture column is executed.
+
+That fixture column is derived from the axe rules each case asserts, cross-checked
+against `verify/axe-rules.json` — not from the `criterion` field in a fixture's
+`meta.json`. That field records what the case is *about*, and it is not a
+measurement: both `accessible-forms` cases are about SC 3.3.2, but axe's `label`
+rule carries only SC 4.1.2, so nothing here executes 3.3.2. Counting the declared
+field overcounted this number by one until it was fixed.
+
+3 fixture cases assert best-practice rules only and therefore
+execute no criterion at all (`headings-and-landmarks/content-outside-landmarks`, `headings-and-landmarks/skipped-heading-level`, `modal-dialog/dialog-without-accessible-name`). They still prove that the
+fix works and that nothing else broke — a best-practice violation in `after.html`
+fails the suite — but they are not evidence about a success criterion, and counting
+them as such would be the dishonest version.
 
 ## Full criterion list
 
@@ -191,4 +205,4 @@ is.
 
 ---
 
-*Generated from 33 skills: 70 of 86 criteria addressed, 9 with executable fixtures, 14 fixture cases.*
+*Generated from 33 skills: 70 of 86 criteria addressed, 8 with executable fixtures, 14 fixture cases.*

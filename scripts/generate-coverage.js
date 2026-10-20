@@ -27,6 +27,7 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, '..');
 const SPEC = JSON.parse(readFileSync(join(ROOT, 'verify', 'wcag-2.2.json'), 'utf8'));
 const FIXTURES = join(ROOT, 'verify', 'fixtures');
+const AXE = JSON.parse(readFileSync(join(ROOT, 'verify', 'axe-rules.json'), 'utf8')).rules;
 
 /**
  * Criteria no design procedure can prevent, so their absence from the library is
@@ -76,7 +77,18 @@ function fixtureCounts() {
   return counts;
 }
 
-/** Criterion ids for which at least one fixture declares it. */
+/**
+ * Criterion ids asserted by at least one fixture.
+ *
+ * Derived from each fixture's `expectRules` and the axe snapshot — deliberately
+ * NOT from the hand-written `criterion` field in `meta.json`. That field says what
+ * a case is *about*, which is not the same as what its assertions measure, and
+ * trusting it overcounted this number: both `accessible-forms` cases are about
+ * SC 3.3.2, but axe's `label` rule carries only SC 4.1.2, so 3.3.2 was being
+ * counted as executed when nothing executes it.
+ *
+ * A number that the person being counted can edit is not a measurement.
+ */
 function fixtureCriteria() {
   const ids = new Set();
   if (!existsSync(FIXTURES)) return ids;
@@ -87,11 +99,38 @@ function fixtureCriteria() {
       const metaPath = join(dir, c, 'meta.json');
       if (!existsSync(metaPath)) continue;
       const meta = JSON.parse(readFileSync(metaPath, 'utf8'));
-      const m = /SC\s+(\d+\.\d+\.\d+)/.exec(meta.criterion || '');
-      if (m) ids.add(m[1]);
+      for (const ruleId of meta.expectRules ?? []) {
+        for (const id of AXE[ruleId]?.criteria ?? []) ids.add(id);
+      }
     }
   }
   return ids;
+}
+
+/**
+ * Fixture cases whose rules carry no success criterion at all — i.e. they assert
+ * best-practice rules only. These are not worthless (they still prove the fix
+ * works and that nothing else broke), but they must not be counted as executing a
+ * criterion.
+ */
+function fixtureCasesWithoutCriterion() {
+  const out = [];
+  if (!existsSync(FIXTURES)) return out;
+  for (const skill of readdirSync(FIXTURES)) {
+    const dir = join(FIXTURES, skill);
+    if (!existsSync(dir)) continue;
+    for (const c of readdirSync(dir)) {
+      const metaPath = join(dir, c, 'meta.json');
+      if (!existsSync(metaPath)) continue;
+      const meta = JSON.parse(readFileSync(metaPath, 'utf8'));
+      const ids = new Set();
+      for (const ruleId of meta.expectRules ?? []) {
+        for (const id of AXE[ruleId]?.criteria ?? []) ids.add(id);
+      }
+      if (ids.size === 0) out.push(`${skill}/${c}`);
+    }
+  }
+  return out;
 }
 
 function sortIds(ids) {
@@ -120,6 +159,7 @@ export function coverageStats() {
     covered,
     uncovered: all.filter((id) => !addressed.has(id)),
     fixtureIds: sortIds(fixtures),
+    fixtureNoCriterion: fixtureCasesWithoutCriterion().sort(),
     fixtureCounts: counts,
     fixtureCases: [...counts.values()].reduce((a, b) => a + b, 0),
   };
@@ -154,8 +194,9 @@ into a single percentage would give a bigger number and a false one.
 |---|---|
 | Criteria in WCAG ${SPEC.version} | ${s.all.length} |
 | Criteria **addressed by a skill** | **${s.covered.length}** (${pct(s.covered.length, s.all.length)}%) |
-| Criteria with an **executable fixture** | **${s.fixtureIds.length}** |
+| Criteria **asserted by an executable fixture** | **${s.fixtureIds.length}** |
 | Fixture cases | ${s.fixtureCases} across ${s.fixtureCounts.size} skills |
+| Fixture cases that assert no criterion (best-practice rules only) | ${s.fixtureNoCriterion.length} |
 | Skills | ${s.skills.length} |
 
 ### By conformance level
@@ -173,6 +214,19 @@ Size (Enhanced) especially.
 
 **"Addressed" does not mean "verified".** It means a skill names the criterion
 and gives a procedure for it. Only the fixture column is executed.
+
+That fixture column is derived from the axe rules each case asserts, cross-checked
+against \`verify/axe-rules.json\` — not from the \`criterion\` field in a fixture's
+\`meta.json\`. That field records what the case is *about*, and it is not a
+measurement: both \`accessible-forms\` cases are about SC 3.3.2, but axe's \`label\`
+rule carries only SC 4.1.2, so nothing here executes 3.3.2. Counting the declared
+field overcounted this number by one until it was fixed.
+
+${s.fixtureNoCriterion.length} fixture cases assert best-practice rules only and therefore
+execute no criterion at all${s.fixtureNoCriterion.length ? ` (${s.fixtureNoCriterion.map((c) => `\`${c}\``).join(', ')})` : ''}. They still prove that the
+fix works and that nothing else broke — a best-practice violation in \`after.html\`
+fails the suite — but they are not evidence about a success criterion, and counting
+them as such would be the dishonest version.
 
 ## Full criterion list
 
