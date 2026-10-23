@@ -1,7 +1,7 @@
 {
   "name": "a11y-skills",
-  "version": "0.3.2",
-  "description": "33 WCAG 2.2 procedures for coding agents, covering every Level A and AA criterion, with a curated axe-core rule to skill map and every fix proved by executable fixtures.",
+  "version": "0.4.0",
+  "description": "33 WCAG 2.2 procedures for coding agents, covering every Level A and AA criterion, with a curated axe-core rule to skill map and an audit command that computes the fix.",
   "type": "module",
   "bin": {
     "a11y-skills": "bin/a11y-skills.js"
@@ -29,7 +29,7 @@
     "build-docs": "node scripts/generate-index.js && node scripts/generate-coverage.js && node scripts/generate-rule-docs.js",
     "demo": "node scripts/make-demo.mjs",
     "security": "npx --yes github:AdilSiddiquiHQ/skillsleuth#v0.4.0 . --fail-on none",
-    "test": "node verify/verify-skills.js && node verify/verify-readme.js",
+    "test": "node verify/verify-skills.js && node verify/verify-readme.js && node verify/verify-fixes.js",
     "test:all": "npm test && npm run fixtures",
     "check": "npm run build-docs && npm test && npm run fixtures",
     "demo:cli": "node scripts/make-cli-demo.mjs",

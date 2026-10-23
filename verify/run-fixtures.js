@@ -19,7 +19,8 @@
  *   npm run fixtures -- --json    machine-readable, used by generate-coverage
  */
 
-import { openBrowser, scanHtml, fixtureCases, readIfExists, ROOT } from './axe.js';
+import { openBrowser, scanHtml, scanWithFixes, fixtureCases, readIfExists, ROOT } from './axe.js';
+import { suggestFix } from '../lib/fixes.js';
 
 const CASES = fixtureCases();
 const asJson = process.argv.includes('--json');
@@ -52,15 +53,40 @@ async function main() {
 
       let beforeIds = [];
       let afterViolations = [];
+      let fixesChecked = 0;
 
       if (before !== null) {
-        beforeIds = (await scanHtml(browser, before, axeOptions)).map((v) => v.id);
+        const beforeViolations = await scanHtml(browser, before, axeOptions);
+        beforeIds = beforeViolations.map((v) => v.id);
         for (const rule of expected) {
           if (!beforeIds.includes(rule)) {
             problems.push(
               `before.html does not trigger '${rule}'` +
                 (beforeIds.length ? ` (it triggered: ${beforeIds.join(', ')})` : ' (it triggered nothing)')
             );
+          }
+        }
+
+        // The suggester is only worth having if applying it works. Take the real
+        // axe numbers, compute the fix, apply that one change in the browser, and
+        // require axe to stop reporting that node. Arithmetic checked in
+        // verify-fixes.js is not the same thing as advice that works.
+        for (const v of beforeViolations) {
+          if (v.id !== 'color-contrast') continue;
+          for (const n of v.nodes) {
+            const fix = suggestFix({ rule: v.id, html: n.html, target: n.target, checks: n.checks });
+            if (fix?.kind !== 'exact') continue;
+            const m = /^(color|background-color): (#[0-9a-f]{6});$/i.exec(fix.snippet);
+            if (!m) continue;
+            const rescan = await scanWithFixes(browser, before, axeOptions, [
+              { target: n.target, property: m[1], value: m[2] },
+            ]);
+            const still = rescan.find((r) => r.id === 'color-contrast' && r.targets.includes(n.target));
+            if (still) {
+              problems.push(`the suggested ${m[1]} ${m[2]} did not clear color-contrast on ${n.target}`);
+            } else {
+              fixesChecked++;
+            }
           }
         }
       }
@@ -81,6 +107,7 @@ async function main() {
           (r) => axeOptions.rules[r]?.enabled === true
         ),
         beforeIds,
+        fixesChecked,
         afterClean: afterViolations.length === 0,
         ok: problems.length === 0,
         problems,
@@ -89,7 +116,10 @@ async function main() {
       if (!asJson) {
         const label = `${c.skill}/${c.name}`;
         if (problems.length === 0) {
-          console.log(`  ok    ${label.padEnd(44)} before: ${expected.join(', ')} → after: clean`);
+          console.log(
+            `  ok    ${label.padEnd(44)} before: ${expected.join(', ')} → after: clean` +
+              (fixesChecked ? ` · ${fixesChecked} suggested fix${fixesChecked === 1 ? '' : 'es'} applied` : '')
+          );
         } else {
           console.log(`  FAIL  ${label}`);
           for (const p of problems) console.log(`        ${p}`);
@@ -106,9 +136,11 @@ async function main() {
     console.log(JSON.stringify({ cases: results.length, failed: failed.length, results }, null, 2));
   } else {
     console.log('');
+    const fixes = results.reduce((n, r) => n + (r.fixesChecked ?? 0), 0);
     if (failed.length === 0) {
       console.log(
-        `  ${results.length} fixtures: every "before" trips its named rules, every "after" is clean`
+        `  ${results.length} fixtures: every "before" trips its named rules, every "after" is clean` +
+          (fixes ? `, and ${fixes} suggested fix${fixes === 1 ? '' : 'es'} cleared the finding when applied` : '')
       );
       console.log('');
     } else {

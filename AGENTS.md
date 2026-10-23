@@ -73,6 +73,13 @@ rather than assuming it passed.
     bugs lived, one of which reported every audit as zero findings while the CLI
     beneath it exited 1. Change the script, and change the assertions in the
     fixtures job with it.
+13. **A fix suggestion is either computed or labelled `structure`.** In
+    `lib/fixes.js`, `exact` means there is one right answer and the value is
+    calculated — colour contrast, the viewport tag, 24×24 px. `structure` means the
+    shape is determined but the words are the author's. Never dress a guess as
+    `exact`: no `alt` text from a file name, no label text from a field name. Every
+    `color-contrast` suggestion is applied in Chromium during `npm run fixtures`,
+    and the run fails if axe keeps reporting the finding.
 
 ## Facts about axe-core that are easy to get wrong
 

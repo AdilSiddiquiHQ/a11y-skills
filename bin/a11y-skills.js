@@ -28,6 +28,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 import { homedir } from 'node:os';
 import { findChromium } from '../lib/chromium.js';
+import { suggestFix } from '../lib/fixes.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, '..');
@@ -89,6 +90,7 @@ ${C.bold}INSTALL OPTIONS${C.reset}
 
 ${C.bold}AUDIT OPTIONS${C.reset}
   --fail-on <level>   critical | serious | moderate | minor | none   (default: serious)
+  --fix               print the computed change for findings that have one
   --wcag-only         ignore best-practice rules, report WCAG failures only
   --md                a Markdown report, for a CI comment or step summary
   --browser <path>    a Chromium binary to use instead of searching for one
@@ -106,6 +108,7 @@ ${C.bold}EXAMPLES${C.reset}
   npx github:AdilSiddiquiHQ/a11y-skills search "dialog focus"
   npx github:AdilSiddiquiHQ/a11y-skills criteria 1.4.3 --json
   npx github:AdilSiddiquiHQ/a11y-skills rules color-contrast
+  npx github:AdilSiddiquiHQ/a11y-skills audit https://example.com --fix
   npx github:AdilSiddiquiHQ/a11y-skills audit https://example.com --wcag-only
   npx github:AdilSiddiquiHQ/a11y-skills install --agent opencode --force
 `);
@@ -532,12 +535,13 @@ function needsWhat(what, how) {
 }
 
 function cmdAudit(argv) {
-  const opts = { md: false, wcagOnly: false, failOn: 'serious', browser: null, target: null };
+  const opts = { md: false, wcagOnly: false, fix: false, failOn: 'serious', browser: null, target: null };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === '--fail-on') opts.failOn = argv[++i];
     else if (a === '--browser') opts.browser = argv[++i];
     else if (a === '--md') opts.md = true;
+    else if (a === '--fix') opts.fix = true;
     else if (a === '--wcag-only') opts.wcagOnly = true;
     else if (a === '--json' || a === '--no-color' || a === '--color') continue;
     else if (a.startsWith('-')) {
@@ -551,7 +555,7 @@ function cmdAudit(argv) {
   }
 
   if (!opts.target) {
-    console.error('usage: a11y-skills audit <file.html|https://url> [--wcag-only] [--md] [--json]');
+    console.error('usage: a11y-skills audit <file.html|https://url> [--fix] [--wcag-only] [--md] [--json]');
     process.exit(2);
   }
   const levels = [...IMPACT_ORDER, 'none'];
@@ -629,6 +633,12 @@ async function runAudit(opts, { isUrl, targetPath, axe, map, skills }) {
           nodes: v.nodes.map((n) => ({
             target: n.target.join(' '),
             html: (n.html || '').slice(0, 180),
+            // The check data is where axe keeps the numbers — fgColor, bgColor,
+            // contrastRatio, and the viewport value — so `--fix` can compute an
+            // answer instead of guessing at one.
+            checks: [...n.any, ...n.all, ...n.none]
+              .map((c) => ({ id: c.id, data: c.data ?? null }))
+              .filter((c) => c.data !== null),
             // axe puts the actual reason on the lines after "Fix any of the
             // following:", so the first line is the least useful one to keep.
             summary: (() => {
@@ -707,7 +717,12 @@ async function runAudit(opts, { isUrl, targetPath, axe, map, skills }) {
             skill: v.skill,
             why: v.why,
             alsoRelevant: v.alsoRelevant,
-            nodes: v.nodes,
+            nodes: v.nodes.map((n) => ({
+              ...n,
+              ...(opts.fix
+                ? { fix: suggestFix({ rule: v.id, html: n.html, target: n.target, checks: n.checks }) }
+                : {}),
+            })),
           })),
           needsReview: needsReview.map((v) => ({
             id: v.id,
@@ -764,6 +779,19 @@ async function runAudit(opts, { isUrl, targetPath, axe, map, skills }) {
       console.log(`           ${C.dim}e.g.  ${first.target}${C.reset}`);
       if (first.html) console.log(`                 ${C.dim}${first.html}${C.reset}`);
       if (first.summary) console.log(`                 ${C.dim}${first.summary}${C.reset}`);
+      if (opts.fix) {
+        const fix = suggestFix({ rule: v.id, html: first.html, target: first.target, checks: first.checks });
+        if (fix) {
+          const [line, ...rest] = fix.snippet.split('\n');
+          console.log(`           ${C.dim}fix${C.reset}   ${line}`);
+          for (const l of rest) console.log(`                 ${l}`);
+          console.log(
+            `                 ${C.dim}${fix.kind === 'exact' ? '' : 'structure, not text — '}${fix.note}${C.reset}`
+          );
+        } else {
+          console.log(`           ${C.dim}fix   no computed fix for this rule; the skill above has the procedure${C.reset}`);
+        }
+      }
     }
     console.log('');
   }

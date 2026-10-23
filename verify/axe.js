@@ -77,8 +77,47 @@ export async function scanHtml(browser, html, options = {}) {
         nodes: v.nodes.map((n) => ({
           target: n.target.join(' '),
           html: (n.html || '').slice(0, 160),
+          // Where axe keeps the numbers a fix has to be computed from.
+          checks: [...n.any, ...n.all, ...n.none]
+            .map((c) => ({ id: c.id, data: c.data ?? null }))
+            .filter((c) => c.data !== null),
           summary: n.failureSummary?.split('\n').filter(Boolean)[0] || '',
         })),
+      }));
+    }, options);
+    return result;
+  } finally {
+    await page.close();
+  }
+}
+
+/**
+ * Load the same page, apply the computed fixes as inline styles, and scan again.
+ *
+ * This is the only honest way to test a fix suggester: recompute the ratio in
+ * isolation and you have tested the arithmetic, not the advice. Here the browser
+ * decides whether the suggestion actually clears the finding axe reported.
+ */
+export async function scanWithFixes(browser, html, options, fixes) {
+  const page = await browser.newPage();
+  try {
+    await page.setContent(html, { waitUntil: 'load' });
+    await page.evaluate((list) => {
+      for (const f of list) {
+        for (const el of document.querySelectorAll(f.target)) {
+          el.style.setProperty(f.property, f.value);
+        }
+      }
+    }, fixes);
+    await page.addScriptTag({ content: AXE_SOURCE });
+    const result = await page.evaluate(async (runOptions) => {
+      const r = await window.axe.run(document, {
+        resultTypes: ['violations'],
+        ...runOptions,
+      });
+      return r.violations.map((v) => ({
+        id: v.id,
+        targets: v.nodes.map((n) => n.target.join(' ')),
       }));
     }, options);
     return result;

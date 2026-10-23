@@ -6,7 +6,7 @@ WCAG 2.2, plus a curated map from axe-core's rules to the skill that fixes them.
 
 ```bash
 npx github:AdilSiddiquiHQ/a11y-skills search "dialog focus"   # find the procedure
-npx github:AdilSiddiquiHQ/a11y-skills audit ./dist/index.html # scan, then read the fix
+npx github:AdilSiddiquiHQ/a11y-skills audit ./dist/index.html --fix # scan, then the computed change
 ```
 
 [![CI](https://github.com/AdilSiddiquiHQ/a11y-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/AdilSiddiquiHQ/a11y-skills/actions/workflows/ci.yml)
@@ -70,13 +70,16 @@ The installer copies files. It makes no network calls, executes nothing it finds
 and will not overwrite an installed skill without `--force`. Or skip it — clone
 the repo and copy `skills/*` wherever your agent reads skills from.
 
-## Audit: close the loop
+## Audit: from finding to fix
 
-A scanner reports the rule and stops. **99 of 105 axe rules** here are mapped to the
-skill that contains the fix, so one command takes you from finding to procedure:
+A scanner reports the rule and stops. axe tells you a paragraph is 2.16:1 and links
+to a help page; it does not tell you which colour to use, so the fix gets guessed —
+`#767676` on one line, `#777777` on the next. `audit` closes that loop twice over:
+**99 of 105 axe rules** are mapped to the skill holding the procedure, and `--fix`
+computes the change for the rules where there is one right answer.
 
 ```bash
-npx github:AdilSiddiquiHQ/a11y-skills audit <file.html|https://url>
+npx github:AdilSiddiquiHQ/a11y-skills audit <file.html|https://url> --fix
 ```
 
 ```
@@ -91,22 +94,42 @@ npx github:AdilSiddiquiHQ/a11y-skills audit <file.html|https://url>
            e.g.  input[type="password"]
                  <input type="password" name="password">
                  Element does not have an implicit (wrapped) <label>
+           fix   <label for="password">Label text</label>
+                 <input id="password" type="password" name="password">
+                 structure, not text — Add id="password" and a label pointing at it. The words are yours; the association is the fix. A placeholder is not a label.
 
   serious  color-contrast  3 nodes
            Elements must meet minimum color contrast ratio thresholds
            WCAG  SC 1.4.3 Contrast (Minimum) (AA)
            read  skills/fix-color-contrast/  — text contrast is below 4.5:1, or 3:1 for large text
            e.g.  .field-label:nth-child(1)
+                 <p class="field-label">Email address</p>
                  Element has insufficient color contrast of 2.37 (foreground color: #a8a8a8,
                  background color: #ffffff, font size: 9.8pt (13px), font weight: normal)
+           fix   color: #767676;
+                 4.54:1 on #ffffff, was 2.37:1. darker by 29%.
 
   2 findings across 2 rules (1 serious, 1 critical)
   2 can be looked up here, 0 cannot yet
   --fail-on serious → exit 1 (2 at or above the threshold)
 ```
 
+There are two kinds of suggestion, and the output says which is which:
+
+- **exact** — the value is computed, so there is one answer. Colour contrast (the
+  nearest 8-bit colour that reaches the required ratio, verified by recomputing the
+  ratio from the rounded hex), the corrected `<meta name="viewport">`, and the
+  24×24 px minimum for SC 2.5.8.
+- **structure** — the shape of the fix is determined, the words are not. A label's
+  text is yours to write; that it needs a `for` pointing at an id is not a matter of
+  taste. Nothing here invents `alt` text from a file name.
+
+A suggestion is never emitted for a rule it cannot answer; those findings still name
+the skill instead of guessing. Every colour suggestion is applied in a real browser
+during `npm run fixtures`, and the run fails if axe keeps reporting the finding.
+
 - `--md` writes a report for a CI step summary or a pull-request comment.
-- `--json` gives the findings with their skills, for another tool.
+- `--json` gives the findings with their skills and fixes, for another tool.
 - `--wcag-only` ignores best-practice rules; `--fail-on <level>` sets the exit code.
 - It reports how many findings **have no skill behind them** rather than implying
   every rule is covered, and it tells you how many results axe could not decide.
@@ -326,7 +349,7 @@ that needs a keyboard, a screen reader or a human judgement says so in its own
 | `info <skill>` | One skill: description, criteria with spec names and levels, sections, file path |
 | `criteria [x.y.z]` | Which skills address a criterion — or the whole covered list |
 | `rules [axe-rule]` | axe rule → skill, with the criteria the rule tests and why that skill |
-| `audit <file\|url>` | Run axe-core and print the fixing skill for every finding |
+| `audit <file\|url>` | Run axe-core and print the fixing skill for every finding; `--fix` adds a computed change where one exists |
 | `install [--dest] [--agent] [--force] [--dry-run]` | Copy the skills into your agent |
 
 `--json` works on all of them, so another tool or an agent can drive this without
@@ -367,8 +390,12 @@ The case for a skill is the part it will *reliably* get right:
 
 Run axe — it is good, and these skills tell you to. But axe reports; it does not
 decide. It will tell you `color-contrast` failed without telling you which of the
-three ways to fix it keeps your brand colour. Three things the scan does not say:
+three ways to fix it keeps your brand colour. Four things the scan does not say:
 
+- **It reports the failing value, not a passing one.** `#a8a8a8` on `#ffffff` at
+  2.37:1 and a help link is the whole finding. `--fix` computes the nearest 8-bit
+  colour that reaches 4.5:1, and the fixture run reapplies it in a real browser to
+  prove axe stops reporting it.
 - **It does not check target size unless you ask.** axe ships `target-size` — the
   only automated check for SC 2.5.8, one of the two criteria WCAG 2.2 itself
   added — **disabled by default**. A green audit says nothing about it. Ten of the

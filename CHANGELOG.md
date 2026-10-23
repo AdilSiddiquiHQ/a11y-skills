@@ -4,6 +4,34 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] — 2026-10-23
+
+`audit --fix`. The first version that tells you the change, not only the reading.
+
+### Added
+
+- **`audit --fix` prints the change.** For a finding with one right answer it
+  computes it: the nearest 8-bit colour that reaches the required contrast ratio,
+  a `<meta name="viewport">` with only the zoom-blocking directives removed, the
+  24×24 px minimum for SC 2.5.8. For a finding whose shape is determined but whose
+  words are not — a label, a button name, alt text, the document title, the page
+  language, a dialog name — it prints the structure and marks the text as yours.
+  Rules with no determined answer still name the skill and print no guess.
+- **`lib/fixes.js`**: pure, dependency-free, and the only place this project
+  computes a value on someone's behalf.
+- **`verify/verify-fixes.js`**: the contrast maths checked against published WCAG
+  pairs (`#777777` on white is 4.48:1 and must become `#767676` at 4.54:1), and
+  every rule with a fixer checked against the axe snapshot.
+- **The fixture run applies the suggestions.** For every `before.html` that fails
+  contrast, the computed colour is applied in Chromium and axe must stop reporting
+  that node. Four suggestions across two fixtures are proved this way; a wrong
+  colour fails the suite.
+
+### Changed
+
+- `audit --json` includes `fix` on each node when `--fix` is passed.
+- `npm test` includes the fixer checks.
+
 ## [0.3.2] — 2026-10-20
 
 A measurement fix. One number in the README and the coverage report was counting a
